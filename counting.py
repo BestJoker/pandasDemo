@@ -114,7 +114,7 @@ def keepExcelSheet(df,keep_series,every_df):
     print (keep_series.shape)
 
 
-result_path = '/Users/fujinshi/Desktop/多人讨论数据.xlsx'
+result_path = '/Users/fujinshi/Desktop/多人讨论围观明细数据/多人讨论汇总数据.xlsx'
 
 num_dataFrame = pd.DataFrame(
     columns=['日期', '主题', '总围观人数', '社员围观人数', '老注册围观人数', '新注册围观人数', '总人均时长', '社员人均时长', '老注册人均时长', '新注册人均时长'])
@@ -126,11 +126,11 @@ print (time_interval_dataFrame)
 keep_series = pd.Series()
 dic = {}
 
-for x in list(pd.date_range(start='2020-02-03', end='2020-02-04')):
+for x in list(pd.date_range(start='2020-02-03', end='2020-02-16')):
     # 生成时间，就是表格名称
     dateStr = x.strftime('%m-%d')
     # 生成表格路径
-    path = '/Users/fujinshi/Desktop/多人讨论围测试明细/' + dateStr + '.xlsx'
+    path = '/Users/fujinshi/Desktop/多人讨论围观明细数据/' + dateStr + '.xlsx'
     print (path)
     # 判断如果没有文件则直接跳过，如果有文件则正常读取
     try:
@@ -141,34 +141,22 @@ for x in list(pd.date_range(start='2020-02-03', end='2020-02-04')):
         print ('可以执行')
         # 读取excel中原始数据
         df = pd.read_excel(path)
-        '''
+
         #获取观看人数和时间的方法
         new_num_df = numExcelSheet(df)
         num_dataFrame = num_dataFrame.append(new_num_df, ignore_index=True)
         #num_dataFrame存储的就是不同人群的观看人数和时长
-        print (num_dataFrame)
 
         #获取人均观看时长分段数据
         new_time_interval_df = timeIntervalExcelSheet(df)
         time_interval_dataFrame = time_interval_dataFrame.append(new_time_interval_df,ignore_index=True)
-        print (time_interval_dataFrame)
 
-        writer = pd.ExcelWriter(result_path)
-        num_dataFrame.to_excel(excel_writer=writer,sheet_name='主题维度分人群数据',index=None)
-        time_interval_dataFrame.to_excel(excel_writer=writer,sheet_name='平均时长分布',index=None)
-        writer.save()
-        writer.close()
-        '''
         #拼接找到所有用户ID，并且去重
         keep_series = keep_series.append(df['用户ID'])
-        print (keep_series.shape)
         #去重
         keep_series=keep_series.drop_duplicates()
-        print ('去重之后')
-        print (keep_series.shape)
 
         dic[dateStr] = df['用户ID']
-        print (dic)
 
 print (type(keep_series.values))
 
@@ -186,7 +174,6 @@ for x in dic.keys():
     else:
         print ('没有%s列,需要增加',x)
         col_name.insert(len(col_name),x)
-    print (col_name)
     every_df = every_df.reindex(columns=col_name)
 
     for i in range(0,every_df['用户ID'].shape[0]):
@@ -202,20 +189,20 @@ every_df_drop = every_df.drop(['用户ID'], axis = 1, inplace = False)
 every_df['参与次数'] = every_df_drop.apply(lambda x: x.sum(), axis=1)
 #再根据分类计算分布
 total_class_series = every_df['参与次数'].value_counts()
-print (total_class_series.index)
-print (total_class_series)
+
 #创建一个时间分布的表格
-join_count_df = pd.DataFrame(columns=['次数','人数','比例'],index=None)
+join_count_df = pd.DataFrame(columns=['次数','人数','比例'])
+#循环获取分布的数据，生成df，保存到表格中
 for i in range(0,len(total_class_series.index)):
-    print (total_class_series.index)
-    print (i)
-    print ('------')
     title = total_class_series.index.values[i]
-    print (title)
     num = total_class_series.values[i]
-    print ('+++++')
     join_count_df.loc[i,'次数'] = title
     join_count_df.loc[i,'人数'] = num
     join_count_df.loc[i,'比例'] = num / every_df['参与次数'].shape[0]
-    print (str(title) + '+' + str(num) + '+' + str(num / every_df['参与次数'].shape[0]))
-print (join_count_df)
+
+writer = pd.ExcelWriter(result_path)
+num_dataFrame.to_excel(excel_writer=writer, sheet_name='主题维度分人群数据', index=None)
+time_interval_dataFrame.to_excel(excel_writer=writer, sheet_name='平均时长分布', index=None)
+join_count_df.to_excel(excel_writer=writer,sheet_name='围观用户天数分布',index=None)
+writer.save()
+writer.close()
