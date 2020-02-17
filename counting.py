@@ -20,7 +20,7 @@ def numExcelSheet(df):
     member_num = class_series['社员']
     old_num = class_series['老注册']
     new_num = class_series['新注册']
-    total_time = df['围观时长(min)'].mean()
+    total_time = round(df['围观时长(min)'].mean() * 100) / 100.0
     member_time = round(df[df['用户身份'] == '社员']['围观时长(min)'].mean() * 100) / 100.0
     old_time = round(df[df['用户身份'] == '老注册']['围观时长(min)'].mean() * 100) / 100.0
     new_time = round(df[df['用户身份'] == '新注册']['围观时长(min)'].mean() * 100) / 100.0
@@ -104,7 +104,18 @@ def timeIntervalExcelSheet(df):
     new = pd.DataFrame(time_intercal_data, index=['0'])
     return new
 
-path = '/Users/fujinshi/Desktop/多人讨论数据.xlsx'
+#留存,df数据源，keep_df:保存不重复用户id，every_df:保存每一天的id
+def keepExcelSheet(df,keep_series,every_df):
+    print (type(df['用户ID']))
+    print ('进入方法前')
+    print (keep_series.shape)
+    keep_series = keep_series.append(df['用户ID'])
+    print ('拼接之后')
+    print (keep_series.shape)
+
+
+result_path = '/Users/fujinshi/Desktop/多人讨论数据.xlsx'
+
 num_dataFrame = pd.DataFrame(
     columns=['日期', '主题', '总围观人数', '社员围观人数', '老注册围观人数', '新注册围观人数', '总人均时长', '社员人均时长', '老注册人均时长', '新注册人均时长'])
 print (num_dataFrame)
@@ -112,11 +123,14 @@ print (num_dataFrame)
 time_interval_dataFrame = pd.DataFrame(columns=['日期','总围观人数','1分钟以内','1~5分钟','5~10分钟','10~20分钟','20~30分钟','30~60分钟','60~90分钟','90分钟以上','---','社员日期','社员围观人数','社员1分钟以内','社员1~5分钟','社员5~10分钟','社员10~20分钟','社员20~30分钟','社员30~60分钟','社员60~90分钟','社员90分钟以上'])
 print (time_interval_dataFrame)
 
-for x in list(pd.date_range(start='2020-02-03', end='2020-02-16')):
+keep_series = pd.Series()
+every_df = pd.DataFrame(columns=['用户ID'])
+
+for x in list(pd.date_range(start='2020-02-03', end='2020-02-04')):
     # 生成时间，就是表格名称
     dateStr = x.strftime('%m-%d')
     # 生成表格路径
-    path = '/Users/fujinshi/Desktop/' + dateStr + '.xlsx'
+    path = '/Users/fujinshi/Desktop/多人讨论围测试明细/' + dateStr + '.xlsx'
     print (path)
     # 判断如果没有文件则直接跳过，如果有文件则正常读取
     try:
@@ -127,14 +141,29 @@ for x in list(pd.date_range(start='2020-02-03', end='2020-02-16')):
         print ('可以执行')
         # 读取excel中原始数据
         df = pd.read_excel(path)
-
+        '''
         #获取观看人数和时间的方法
         new_num_df = numExcelSheet(df)
         num_dataFrame = num_dataFrame.append(new_num_df, ignore_index=True)
         #num_dataFrame存储的就是不同人群的观看人数和时长
         print (num_dataFrame)
 
+        #获取人均观看时长分段数据
         new_time_interval_df = timeIntervalExcelSheet(df)
         time_interval_dataFrame = time_interval_dataFrame.append(new_time_interval_df,ignore_index=True)
         print (time_interval_dataFrame)
+
+        writer = pd.ExcelWriter(result_path)
+        num_dataFrame.to_excel(excel_writer=writer,sheet_name='主题维度分人群数据',index=None)
+        time_interval_dataFrame.to_excel(excel_writer=writer,sheet_name='平均时长分布',index=None)
+        writer.save()
+        writer.close()
+        '''
+        #拼接找到所有用户ID，并且去重
+        keep_series = keep_series.append(df['用户ID'])
+        print (keep_series.shape)
+        #去重
+        keep_series=keep_series.drop_duplicates()
+        print ('去重之后')
+        print (keep_series.shape)
 
