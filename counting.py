@@ -124,7 +124,7 @@ time_interval_dataFrame = pd.DataFrame(columns=['日期','总围观人数','1分
 print (time_interval_dataFrame)
 
 keep_series = pd.Series()
-every_df = pd.DataFrame(columns=['用户ID'])
+dic = {}
 
 for x in list(pd.date_range(start='2020-02-03', end='2020-02-04')):
     # 生成时间，就是表格名称
@@ -167,3 +167,55 @@ for x in list(pd.date_range(start='2020-02-03', end='2020-02-04')):
         print ('去重之后')
         print (keep_series.shape)
 
+        dic[dateStr] = df['用户ID']
+        print (dic)
+
+print (type(keep_series.values))
+
+#根据保存的每天的记录，判断一个人在某天是否来了
+#将用户去重数据填充到
+every_df = pd.DataFrame({'用户ID':keep_series.values})
+col_name = every_df.columns.tolist()
+
+#日期中循环
+for x in dic.keys():
+    print (x)
+    if x in col_name:
+        print ('已经有%s列了',x)
+        continue
+    else:
+        print ('没有%s列,需要增加',x)
+        col_name.insert(len(col_name),x)
+    print (col_name)
+    every_df = every_df.reindex(columns=col_name)
+
+    for i in range(0,every_df['用户ID'].shape[0]):
+        id = every_df['用户ID'][i]
+        if id in dic[x].values:
+            every_df.loc[i,x] = 1
+        else:
+            every_df.loc[i,x] = 0
+
+#由于地区不能参与运算, 因此在df1数据表中删除地区
+every_df_drop = every_df.drop(['用户ID'], axis = 1, inplace = False)
+#求每行的和，即为参加次数
+every_df['参与次数'] = every_df_drop.apply(lambda x: x.sum(), axis=1)
+#再根据分类计算分布
+total_class_series = every_df['参与次数'].value_counts()
+print (total_class_series.index)
+print (total_class_series)
+#创建一个时间分布的表格
+join_count_df = pd.DataFrame(columns=['次数','人数','比例'],index=None)
+for i in range(0,len(total_class_series.index)):
+    print (total_class_series.index)
+    print (i)
+    print ('------')
+    title = total_class_series.index.values[i]
+    print (title)
+    num = total_class_series.values[i]
+    print ('+++++')
+    join_count_df.loc[i,'次数'] = title
+    join_count_df.loc[i,'人数'] = num
+    join_count_df.loc[i,'比例'] = num / every_df['参与次数'].shape[0]
+    print (str(title) + '+' + str(num) + '+' + str(num / every_df['参与次数'].shape[0]))
+print (join_count_df)
