@@ -2,14 +2,52 @@
 import pandas as pd
 import numpy as np
 import os
+import openpyxl
 
-#读取文件
+def dataFrameAddSheet(dataframe,excelWriter,sheet_name):
+    print ('进入函数'+sheet_name)
+    dataframe.to_excel(excel_writer=excelWriter,sheet_name=sheet_name,index=None)
+    excelWriter.save()
+    excelWriter.close()
+    print ('成功')
+
+
+#读取文件（项目中文件）
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))#获取项目根目录
 path = os.path.join(PROJECT_ROOT,"02-13多人讨论围观明细.xlsx") #文件路径
+
+#读取文件（文件夹中文件）
+path = '/Users/fujinshi/Desktop/02-03.xlsx'
+
 print (path)
 df = pd.read_excel(path)#读取xlsx文件内容
 print (df.shape)
-print (df)
+print (df.columns)
+print (df[['用户ID','name']])
+
+#取出所有关于【58天直播】主题的内容
+df1 = df[df['主题'].str.startswith('【58天')]
+print (df1)
+#判断过滤出来的主题是否唯一，如果不唯一，则分成两个列表
+list = df1['主题'].unique()
+print (list[0])
+writer=pd.ExcelWriter(path)
+print (type(writer))
+
+if len(list) > 1:
+    #分成两个列表保存
+    print ('有两个主题')
+else:
+    #直接保存
+    print ('只有一个主题')
+    dataFrameAddSheet(df1,writer,'测试')
+    print ('执行结束')
+
+
+
+
+
+
 
 '''
 print ('------')
