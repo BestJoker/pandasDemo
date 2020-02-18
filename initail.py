@@ -20,6 +20,9 @@ def handing_excel(path):
     print (df.columns)
     # 取出所有关于【58天直播】主题的内容
     df1 = df[df['主题'].str.startswith('【58天')]
+    df1['reset_index'] = range(0,df1.shape[0])
+    df1=df1.set_index(['reset_index'])
+    print (df1)
     # 插入两列，用户身份和时长分布
     col_name = df1.columns.tolist()
     person_bool = '用户身份' in col_name
@@ -39,9 +42,10 @@ def handing_excel(path):
     print (df1.columns.tolist())
 
     # len(df1['用户创建时间'])
-    for i in range(0, df.shape[0]):  # len(df1['用户创建时间'])
+    for i in range(0, df1.shape[0]):  # len(df1['用户创建时间'])
         # 根据is_member和用户创建时间将用户分为社员，老注册和新注册三类
-        date_str = (df1['用户创建时间'][i].split('T'))[0]
+        orign_date_str = df1['用户创建时间'][i]
+        date_str = orign_date_str.split('T')[0]
         if (df1['is_member'][i] == 1):
             df1.loc[i, '用户身份'] = '社员'
         elif date_str < '2020-02-01':
@@ -83,7 +87,7 @@ def handing_excel(path):
     writer.close()
 
 
-for x in list(pd.date_range(start='2020-02-03',end='2020-02-16')):
+for x in list(pd.date_range(start='2020-02-16',end='2020-02-17')):
     #生成时间，就是表格名称
     dateStr = x.strftime('%m-%d')
     #生成表格路径
