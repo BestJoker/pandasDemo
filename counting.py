@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 import openpyxl
+from datetime import datetime,date,timedelta
 
 
 #不同人群的观看人数和平均观看时长数据组合
@@ -79,6 +80,7 @@ def timeIntervalExcelSheet(df):
     member_5_rate = ((member_0_1+member_1_5) / member_num)
     member_10_rate = ((member_0_1+member_1_5+member_5_10) / member_num)
     member_30_up_rate = ((member_30_60+member_60_90+member_90) / member_num)
+
     time_intercal_data = {
         '日期': date,
         '总围观人数': total_num,
@@ -127,10 +129,13 @@ print (num_dataFrame)
 time_interval_dataFrame = pd.DataFrame(columns=['日期','总围观人数','1分钟以内','1~5分钟','5~10分钟','10~20分钟','20~30分钟','30~60分钟','60~90分钟','90分钟以上','---','社员日期','社员围观人数','社员1分钟以内','社员1~5分钟','社员5~10分钟','社员10~20分钟','社员20~30分钟','社员30~60分钟','社员60~90分钟','社员90分钟以上','社员5分钟以内占比','社员10分钟以内占比','社员30分钟以上占比'])
 print (time_interval_dataFrame)
 
-keep_series = pd.Series()
-dic = {}
-keep_days = 5
-list = list(pd.date_range(start='2020-02-16', end='2020-02-17'))
+#获取昨天日期
+end_str = yesterday = (date.today() + timedelta(days = -1)).strftime("%Y-%m-%d")    # 昨天日期
+
+keep_series = pd.Series()#存放留存天数内所有用户ID，去重
+dic = {}#存放每天访问用id，用户比较用户某天是否来过
+keep_days = 5#留存包含最新的日期的几天
+list = list(pd.date_range(start='2020-02-03', end=end_str))
 
 for x in list:
     # 生成时间，就是表格名称
@@ -156,9 +161,6 @@ for x in list:
         #获取人均观看时长分段数据
         new_time_interval_df = timeIntervalExcelSheet(df)
         time_interval_dataFrame = time_interval_dataFrame.append(new_time_interval_df,ignore_index=True)
-        print ('+++++')
-        print (time_interval_dataFrame)
-        print ('+++++')
 
         # 判断是否计算留存
         keep_bool = 0
@@ -220,12 +222,10 @@ for i in range(0,len(total_class_series.index)):
     join_count_df.loc[i,'人数'] = num
     join_count_df.loc[i,'比例'] = num / every_df['参与次数'].shape[0]
 
-print (join_count_df)
-print (join_count_df.T)
-
 writer = pd.ExcelWriter(result_path)
 num_dataFrame.to_excel(excel_writer=writer, sheet_name='主题维度分人群数据', index=None)
 time_interval_dataFrame.to_excel(excel_writer=writer, sheet_name='平均时长分布', index=None)
 join_count_df.T.to_excel(excel_writer=writer,sheet_name='围观用户天数分布')
 writer.save()
 writer.close()
+
