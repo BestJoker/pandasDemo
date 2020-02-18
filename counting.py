@@ -125,8 +125,10 @@ print (time_interval_dataFrame)
 
 keep_series = pd.Series()
 dic = {}
+keep_days = 5
+list = list(pd.date_range(start='2020-02-03', end='2020-02-17'))
 
-for x in list(pd.date_range(start='2020-02-03', end='2020-02-17')):
+for x in list:
     # 生成时间，就是表格名称
     dateStr = x.strftime('%m-%d')
     # 生成表格路径
@@ -151,12 +153,23 @@ for x in list(pd.date_range(start='2020-02-03', end='2020-02-17')):
         new_time_interval_df = timeIntervalExcelSheet(df)
         time_interval_dataFrame = time_interval_dataFrame.append(new_time_interval_df,ignore_index=True)
 
-        #拼接找到所有用户ID，并且去重
-        keep_series = keep_series.append(df['用户ID'])
-        #去重
-        keep_series=keep_series.drop_duplicates()
-
-        dic[dateStr] = df['用户ID']
+        # 判断是否计算留存
+        keep_bool = 0
+        #如果list长度小于5天，则直接全部计算，如果大于则取后面5天
+        if (len(list) > keep_days):
+            if x in list[len(list) - keep_days:]:
+                bool = 1
+            else:
+                bool = 0
+        else:
+            bool = 1
+        #如果需要计算留存则计算，否则忽略
+        if bool==1:
+            #拼接找到所有用户ID，并且去重
+            keep_series = keep_series.append(df['用户ID'])
+            #去重
+            keep_series=keep_series.drop_duplicates()
+            dic[dateStr] = df['用户ID']
 
 print (type(keep_series.values))
 
@@ -196,7 +209,7 @@ join_count_df = pd.DataFrame(columns=['次数','人数','比例'])
 for i in range(0,len(total_class_series.index)):
     title = total_class_series.index.values[i]
     num = total_class_series.values[i]
-    join_count_df.loc[i,'次数'] = title
+    join_count_df.loc[i,'次数'] = str(title)+'天'
     join_count_df.loc[i,'人数'] = num
     join_count_df.loc[i,'比例'] = num / every_df['参与次数'].shape[0]
 
