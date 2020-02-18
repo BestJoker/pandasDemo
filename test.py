@@ -4,18 +4,14 @@ import numpy as np
 import os
 import openpyxl
 
-list = list(pd.date_range(start='2020-02-03', end='2020-02-16'))
-for x in list:
-    dateStr = x.strftime('%m-%d')
-    keep_bool = 0 #判断是否计算留存
-    if (len(list) > 5):
-        if x in list[len(list)-5:]:
-            bool = 1
-        else:
-            bool = 0
-    else:
-        bool = 1
-    print (dateStr+'**'+str(bool))
+data = {
+    '次数':[1,2,3,4,5,6,],
+    '人数':[100,309,459,234,156,789]
+        }
+join_count_df = pd.DataFrame(data,index=None)
+print (join_count_df)
+print (join_count_df.T)
+
 
 
 '''
