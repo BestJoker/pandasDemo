@@ -3,8 +3,9 @@ import pandas as pd
 import numpy as np
 import os
 import openpyxl
+from datetime import datetime,date,timedelta
 
-def handing_excel(path):
+def handing_excel(path,current_date_str):
     #判断如果没有文件则直接跳过，如果有文件则正常读取
     try:
         df = pd.read_excel(path)
@@ -82,17 +83,17 @@ def handing_excel(path):
     for i in range(0, len(list)):
         topic = list[i]  # 选出对应主题
         df2 = df1[df1['主题'] == topic]  # 将对应主题筛选出来
-        df2.to_excel(excel_writer=writer, sheet_name=dateStr + '-' + str(i), index=None)
+        df2.to_excel(excel_writer=writer, sheet_name=current_date_str + '-' + str(i), index=None)
     writer.save()
     writer.close()
 
-
-for x in list(pd.date_range(start='2020-02-16',end='2020-02-17')):
+for x in list(pd.date_range(start='2020-02-03',end='2020-02-17')):
     #生成时间，就是表格名称
     dateStr = x.strftime('%m-%d')
     #生成表格路径
-    path = '/Users/fujinshi/Desktop/' + dateStr + '.xlsx'
+    path = '/Users/fujinshi/Desktop/多人讨论围观明细数据/' + dateStr + '.xlsx'
     print (path)
     # 读取文件（文件夹中文件）
-    handing_excel(path)
+    handing_excel(path,dateStr)
+
 
