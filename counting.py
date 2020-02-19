@@ -65,6 +65,9 @@ def timeIntervalExcelSheet(df):
     total_30_60 = total_class_series['30~60分钟']
     total_60_90 = total_class_series['60~90分钟']
     total_90 = total_class_series['90分钟以上']
+    total_5 = total_0_1+total_1_5
+    total_30_up = total_30_60+total_60_90+total_90
+    total_60_up = total_60_90+total_90
 
     member_class_series = df[df['用户身份']=='社员']['时长分布'].value_counts()
     print (member_class_series)
@@ -92,6 +95,9 @@ def timeIntervalExcelSheet(df):
         '30~60分钟': total_30_60,
         '60~90分钟': total_60_90,
         '90分钟以上': total_90,
+        '5分钟以内':total_5,
+        '30分钟以上':total_30_up,
+        '60分钟以上':total_60_up,
         '---':'',
         '社员日期':date,
         '社员围观人数': member_num,
@@ -126,7 +132,7 @@ num_dataFrame = pd.DataFrame(
     columns=['日期', '主题', '总围观人数', '社员围观人数', '老注册围观人数', '新注册围观人数', '总人均时长', '社员人均时长', '老注册人均时长', '新注册人均时长'])
 print (num_dataFrame)
 
-time_interval_dataFrame = pd.DataFrame(columns=['日期','总围观人数','1分钟以内','1~5分钟','5~10分钟','10~20分钟','20~30分钟','30~60分钟','60~90分钟','90分钟以上','---','社员日期','社员围观人数','社员1分钟以内','社员1~5分钟','社员5~10分钟','社员10~20分钟','社员20~30分钟','社员30~60分钟','社员60~90分钟','社员90分钟以上','社员5分钟以内占比','社员10分钟以内占比','社员30分钟以上占比'])
+time_interval_dataFrame = pd.DataFrame(columns=['日期','总围观人数','1分钟以内','1~5分钟','5~10分钟','10~20分钟','20~30分钟','30~60分钟','60~90分钟','90分钟以上','5分钟以内','30分钟以上','60分钟以上','---','社员日期','社员围观人数','社员1分钟以内','社员1~5分钟','社员5~10分钟','社员10~20分钟','社员20~30分钟','社员30~60分钟','社员60~90分钟','社员90分钟以上','社员5分钟以内占比','社员10分钟以内占比','社员30分钟以上占比'])
 print (time_interval_dataFrame)
 
 #获取昨天日期
