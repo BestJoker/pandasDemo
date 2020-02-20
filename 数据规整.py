@@ -319,3 +319,8 @@ print (pd.merge(df1,df2,how='right'))
 # 5   a    5.0      0
 # 6   d    NaN      2
 
+
+'''
+###轴向连接
+另一种数据合并运算也被称作连接（concatenation）、绑定（binding）或堆叠（stacking）
+'''
