@@ -643,11 +643,178 @@ DataFrame和Series之间的运算
 '''
 arr = np.arange(12.).reshape((3,4))
 print (arr)
+# [[ 0.  1.  2.  3.]
+#  [ 4.  5.  6.  7.]
+#  [ 8.  9. 10. 11.]]
 
 print (arr[0])
+#[0. 1. 2. 3.]
 
 print (arr - arr[0])
+# [[0. 0. 0. 0.]
+#  [4. 4. 4. 4.]
+#  [8. 8. 8. 8.]]
 
+#当我们从arr减去arr[0]，每一行都会执行这个操作。这就叫做广播（broadcasting）
+
+frame = pd.DataFrame(np.arange(12.).reshape((4, 3)),columns=list('bde'),index=['Utah', 'Ohio', 'Texas', 'Oregon'])
+
+series = frame.iloc[0]
+
+print (frame)
+#           b     d     e
+# Utah    0.0   1.0   2.0
+# Ohio    3.0   4.0   5.0
+# Texas   6.0   7.0   8.0
+# Oregon  9.0  10.0  11.0
+
+print (series)
+# b    0.0
+# d    1.0
+# e    2.0
+# Name: Utah, dtype: float64
+
+print (frame - series)
+#           b    d    e
+# Utah    0.0  0.0  0.0
+# Ohio    3.0  3.0  3.0
+# Texas   6.0  6.0  6.0
+# Oregon  9.0  9.0  9.0
+
+print ('-------------------')
+
+'''
+函数应用和映射
+①NumPy的ufuncs（元素级数组方法）也可用于操作pandas对象
+②将函数应用到由各列或行所形成的一维数组上
+'''
+frame = pd.DataFrame(np.random.randn(4,3),columns=list('bde'),index=['Utah','Ohio','Texas','Oregon'])
+
+print (frame)
+#                b         d         e
+# Utah   -0.106394  0.642617 -0.235295
+# Ohio    0.473762  1.487093 -1.182141
+# Texas   1.341141  0.364937  0.226267
+# Oregon  0.423306 -0.180981 -0.494756
+
+print (np.abs(frame))
+#                b         d         e
+# Utah    0.106394  0.642617  0.235295
+# Ohio    0.473762  1.487093  1.182141
+# Texas   1.341141  0.364937  0.226267
+# Oregon  0.423306  0.180981  0.494756
+
+f = lambda x: x.max() - x.min()
+print (frame.apply(f))
+# b    1.605575
+# d    2.677043
+# e    0.610599
+# dtype: float64
+
+# 这里的函数f，计算了一个Series的最大值和最小值的差，
+# 在frame的每列都执行了一次。结果是一个Series，使用frame的列作为索引。
+print ('-------------------')
+
+'''
+排序和排名
+要对行或列索引进行排序（按字典顺序），可使用sort_index方法，它将返回一个已排序的新对象：
+'''
+obj = pd.Series(range(4),index=['d','a','b','c'])
+print (obj.sort_index())
+# a    1
+# b    2
+# c    3
+# d    0
+# dtype: int64
+
+frame = pd.DataFrame(np.arange(8).reshape((2,4)),index=['three','one'],columns=['d','a','b','c'])
+print (frame)
+#        d  a  b  c
+# three  0  1  2  3
+# one    4  5  6  7
+
+print (frame.sort_index())
+#        d  a  b  c
+# one    4  5  6  7
+# three  0  1  2  3
+
+print (frame.sort_index(axis=1,ascending=False))
+#        d  c  b  a
+# three  0  3  2  1
+# one    4  7  6  5
+
+#若要按值对Series进行排序，可使用其sort_values方法：
+obj = pd.Series([4, 7, -3, 2])
+print (obj.sort_values())
+# 2   -3
+# 3    2
+# 0    4
+# 1    7
+# dtype: int64
+
+#在排序时，任何缺失值默认都会被放到Series的末尾：
+obj = pd.Series([4, np.nan, 7, np.nan, -3, 2])
+print (obj.sort_values())
+# 4   -3.0
+# 5    2.0
+# 0    4.0
+# 2    7.0
+# 1    NaN
+# 3    NaN
+# dtype: float64
+
+# 当排序一个DataFrame时，你可能希望根据一个或多个列中的值进行排序。
+# 将一个或多个列的名字传递给sort_values的by选项即可达到该目的：
+frame = pd.DataFrame({'b': [4, 7, -3, 2], 'a': [0, 1, 0, 1]})
+print (frame)
+#    b  a
+# 0  4  0
+# 1  7  1
+# 2 -3  0
+# 3  2  1
+
+print (frame.sort_values(by='b'))
+#    b  a
+# 2 -3  0
+# 3  2  1
+# 0  4  0
+# 1  7  1
+
+print (frame.sort_values(by=['b','a']))
+#    b  a
+# 2 -3  0
+# 3  2  1
+# 0  4  0
+# 1  7  1
+
+print ('-------------------')
+
+'''
+5.3 汇总和计算描述统计
+'''
+df = pd.DataFrame([[1.4, np.nan], [7.1, -4.5],[np.nan, np.nan], [0.75, -1.3]], index=['a', 'b', 'c', 'd'],columns=['one', 'two'])
+print (df)
+#     one  two
+# a  1.40  NaN
+# b  7.10 -4.5
+# c   NaN  NaN
+# d  0.75 -1.3
+
+print (df.sum())
+# one    9.25
+# two   -5.80
+# dtype: float64
+
+#传入axis='columns'或axis=1将会按行进行求和运算：
+print (df.sum(axis=1))
+# a    1.40
+# b    2.60
+# c    0.00
+# d   -0.55
+# dtype: float64
+
+#有些方法（如idxmin和idxmax）返回的是间接统计（比如达到最小值或最大值的索引）：
+print (df.idxmax())
 
 
 print ('-------------------')
