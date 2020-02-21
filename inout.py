@@ -5,22 +5,23 @@ import openpyxl
 from datetime import datetime,date,timedelta
 
 #生成对应的结果列表（'是否为当日'，'时间'）
-orign_start_date = '2020-02-03 21:00'
+orign_start_date = '2020-02-03 21:20'
 orign_end_date = '2020-02-04 01:00'
 series = pd.date_range(start=orign_start_date,end=orign_end_date,freq='T')
 result_df = pd.DataFrame(series,columns=['时间'])
 #构建'日期筛选系列'和'时间'的序列
 result_df['日期筛选系列'] = (result_df['时间'].astype(str).str[0:11] > '2020-02-04')
 result_df['时间'] = result_df['时间'].astype(str).str[11:16]
+out_result_df = result_df.copy()
 print (result_df)
-
 
 #构建一个表格数据，映射日期和主题和topic以及起始时间，总时长
 start_date = '2020-02-06'
 end_date = '2020-02-20'
 info_series = pd.date_range(start=start_date,end=end_date,freq='D')
-info_df = pd.DataFrame(columns=['日期','主题','tipic_id','开始时间','结束时间'])
+info_df = pd.DataFrame(columns=['日期','主题','topic_id','开始时间','结束时间'])
 info_df['日期'] = info_series
+print (info_df['日期'])
 
 for x in list(pd.date_range(start=start_date,end=end_date)):
     #生成时间，就是表格名称
@@ -55,6 +56,20 @@ for x in list(pd.date_range(start=start_date,end=end_date)):
         df1 = df[df['类型'] == x][['日期筛选系列','时间',name]]
         df1 = df1.sort_values(by=['日期筛选系列','时间'])
         #加入到结果里面
-        result_df = pd.merge(result_df, df1, how='left', on=['日期筛选系列', '时间'])
+        if x == '进入':
+            result_df = pd.merge(result_df, df1, how='left', on=['日期筛选系列', '时间'])
+        else:
+            out_result_df = pd.merge(out_result_df, df1, how='left', on=['日期筛选系列', '时间'])
 print (result_df.head(50))
-print (info_df.columns)
+print (out_result_df.head(50))
+print (info_df.head(50))
+print (result_df.columns)
+print (out_result_df.columns)
+
+path = '/Users/fujinshi/Desktop/多人讨论/多人讨论分钟跳失/分钟数据汇总.xlsx'
+writer = pd.ExcelWriter(path)
+result_df.to_excel(excel_writer=writer, sheet_name='进入人数', index=None)
+out_result_df.to_excel(excel_writer=writer,sheet_name='离开人数',index=None)
+info_df.to_excel(excel_writer=writer,sheet_name='信息',index=None)
+writer.save()
+writer.close()
