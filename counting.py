@@ -147,7 +147,7 @@ for x in list:
     # 生成时间，就是表格名称
     dateStr = x.strftime('%m-%d')
     # 生成表格路径
-    path = '/Users/fujinshi/Desktop/多人讨论围观明细数据/' + dateStr + '.xlsx'
+    path = '/Users/fujinshi/Desktop/多人讨论/多人讨论围观明细数据/' + dateStr + '.xlsx'
     print (path)
     # 判断如果没有文件则直接跳过，如果有文件则正常读取
     try:

@@ -91,7 +91,7 @@ for x in list(pd.date_range(start='2020-02-19',end='2020-02-20')):
     #生成时间，就是表格名称
     dateStr = x.strftime('%m-%d')
     #生成表格路径
-    path = '/Users/fujinshi/Desktop/多人讨论围观明细数据/' + dateStr + '.xlsx'
+    path = '/Users/fujinshi/Desktop/多人讨论/多人讨论围观明细数据/' + dateStr + '.xlsx'
     print (path)
     # 读取文件（文件夹中文件）
     handing_excel(path,dateStr)
