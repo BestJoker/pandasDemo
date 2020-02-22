@@ -126,7 +126,7 @@ def keepExcelSheet(df,keep_series,every_df):
     print (keep_series.shape)
 
 
-result_path = '/Users/fujinshi/Desktop/多人讨论围观明细数据/多人讨论汇总数据.xlsx'
+result_path = '/Users/fujinshi/Desktop/多人讨论/多人讨论围观明细数据/多人讨论汇总数据.xlsx'
 
 num_dataFrame = pd.DataFrame(
     columns=['日期', '主题', '总围观人数', '社员围观人数', '老注册围观人数', '新注册围观人数', '总人均时长', '社员人均时长', '老注册人均时长', '新注册人均时长'])
@@ -141,7 +141,7 @@ end_str = yesterday = (date.today() + timedelta(days = -1)).strftime("%Y-%m-%d")
 keep_series = pd.Series()#存放留存天数内所有用户ID，去重
 dic = {}#存放每天访问用id，用户比较用户某天是否来过
 keep_days = 5#留存包含最新的日期的几天
-list = list(pd.date_range(start='2020-02-16', end=end_str))
+list = list(pd.date_range(start='2020-02-17', end=end_str))
 
 for x in list:
     # 生成时间，就是表格名称

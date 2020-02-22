@@ -12,11 +12,13 @@ result_df = pd.DataFrame(series,columns=['时间'])
 #构建'日期筛选系列'和'时间'的序列
 result_df['日期筛选系列'] = (result_df['时间'].astype(str).str[0:11] > '2020-02-04')
 result_df['时间'] = result_df['时间'].astype(str).str[11:16]
+result_df['画图时间'] = result_df['时间']+'分'
 out_result_df = result_df.copy()
+print (result_df)
 
 
 #构建一个表格数据，映射日期和主题和topic以及起始时间，总时长
-start_date = '2020-02-06'
+start_date = '2020-02-03'
 end_date = '2020-02-20'
 info_series = pd.date_range(start=start_date,end=end_date,freq='D')
 info_df = pd.DataFrame(columns=['日期','主题','topic_id','开始时间','结束时间'])
@@ -29,7 +31,11 @@ for x in list(pd.date_range(start=start_date,end=end_date)):
     path = '/Users/fujinshi/Desktop/多人讨论/多人讨论分钟跳失/' + dateStr + '分钟跳失.xlsx'
     df = pd.read_excel(path)
     # 筛选出只有58天直播活动的
-    df = df[df['主题名称::filter'].str.contains('【58天')].reset_index(drop=True)
+    if dateStr == '02-08':
+        df = df[df['主题名称::filter'].str.contains('【58天互动学习场】单点破局')].reset_index(drop=True)
+    else:
+        df = df[df['主题名称::filter'].str.contains('【58天')].reset_index(drop=True)
+
     # 将时间一列拆分开
     df['日期筛选系列'] = df['分钟'].str[0:5] > df['the_day'].str[5:10]
     df['时间'] = df['分钟'].str[6:11]
