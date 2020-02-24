@@ -5,6 +5,33 @@ import os
 import openpyxl
 from datetime import datetime,date,timedelta
 
+def getTopicWithDateStr(dateStr):
+    topic_dic ={
+        '02-03':'【58天互动学习场】疫情对你的工作生活产生了哪些问题和挑战？',
+        '02-04': '【58天互动学习场】疫情期间，我该如何合理规划开工节奏？',
+        '02-05': '【58天互动学习场】实体受困，如何单点破局实现业务转型？',
+        '02-06': '【58天互动学习场】哪些有意义的事情，让你打破了对疫情的焦虑？',
+        '02-07': '【58天互动学习场】零售等实体生意越来越难做，该怎么经营下去？',
+        '02-08': '【58天互动学习场】单点破局 | 疫情之后，职场人该如何提升核心能力？',
+        '02-09': '【58天互动学习场】困难时期，作为管理者的我，最应该做哪几件事？',
+        '02-10': '【58天互动学习场】自媒体时代，我们普通人如何打造个人超级IP?',
+        '02-11': '【58天互动学习场】2020年，中小企业如何找到新的增长点？',
+        '02-12': '【58天互动学习场】黑天鹅到来，如何从现有业务分形创新出新业务？',
+        '02-13': '【58天互动学习场】重口碑的教育培训行业，如何做营销才有效？',
+        '02-14': '【58天互动学习场】疫情之下，如何管理“个人现金流”？',
+        '02-15': '【58天互动学习场】如何利用深度思考解决复杂问题？',
+        '02-16': '【58天互动学习场】如果未来我们不属于任何一家公司，该如何做准备？',
+        '02-17': '【58天互动学习场】借鉴非典，零售人如何逆势增长？',
+        '02-18': '【58天互动学习场】特殊时期，品牌如何加强与用户的情感链接？',
+        '02-19': '【58天互动学习场】行业格局加速调整，你所在的企业如何突出重围？',
+        '02-20': '【58天互动学习场】高手是如何用OKR实现目标的？',
+        '02-21': '【58天互动学习场】怎样通过用户行为习惯读懂用户需求变化？',
+        '02-22': '【58天互动学习场】传统企业进行数字化转型升级，如何避免踩坑？',
+        '02-23': '【58天互动学习场】企业面临现金流大考，如何行动才能转危为安？'
+    }
+    topic = topic_dic[dateStr]
+    return topic
+
 def handing_excel(path,current_date_str):
     #判断如果没有文件则直接跳过，如果有文件则正常读取
     try:
@@ -87,13 +114,35 @@ def handing_excel(path,current_date_str):
     writer.save()
     writer.close()
 
-for x in list(pd.date_range(start='2020-02-21',end='2020-02-22')):
-    #生成时间，就是表格名称
-    dateStr = x.strftime('%m-%d')
-    #生成表格路径
-    path = '/Users/fujinshi/Desktop/多人讨论/多人讨论围观明细数据/' + dateStr + '.xlsx'
-    print (path)
-    # 读取文件（文件夹中文件）
-    handing_excel(path,dateStr)
+def handing_joiner_excel(path,current_date_str):
+    # 判断如果没有文件则直接跳过，如果有文件则正常读取
+    try:
+        df = pd.read_excel(path)
+    except IOError:
+        print('没有找到文件')
+        return
+    else:
+        print ('可以执行')
+    df = pd.read_excel(path)
+    topic = getTopicWithDateStr(current_date_str)
+    df = df[df['主题'] == topic]
+    writer = pd.ExcelWriter(path)
+    df.to_excel(excel_writer = writer,sheet_name = current_date_str,index=None)
+    writer.save()
+    writer.close()
 
 
+# for x in list(pd.date_range(start='2020-02-20',end='2020-02-23')):
+#     #生成时间，就是表格名称
+#     dateStr = x.strftime('%m-%d')
+
+dateStr = '02-23'
+#生成表格路径
+path = '/Users/fujinshi/Desktop/多人讨论/多人讨论围观明细数据/' + dateStr + '.xlsx'
+print (path)
+# 读取文件（文件夹中文件）
+handing_excel(path,dateStr)
+
+joiner_path = '/Users/fujinshi/Desktop/多人讨论/多人讨论上座明细/' + dateStr + '上座明细.xlsx'
+# 读取文件（文件夹中文件）
+handing_joiner_excel(joiner_path,dateStr)
