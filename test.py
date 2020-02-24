@@ -105,8 +105,8 @@ print ('----------------------------------')
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))#获取项目根目录
 path = os.path.join(PROJECT_ROOT,"Pandas_exercises-master/Euro2012.csv") #文件路径
 euro12 = pd.read_csv(path)
-print (euro12)
-print (euro12.columns)
+#print (euro12)
+#print (euro12.columns)
 
 # -- 只选取 Goals 这一列
 #print (euro12.Goals)
@@ -119,7 +119,7 @@ print (euro12.columns)
 
 # -- 将数据集中的列Team, Yellow Cards和Red Cards单独存为一个名叫discipline的数据框
 discipline = euro12[['Team','Yellow Cards','Red Cards']]
-print (discipline)
+#print (discipline)
 
 # -- 对数据框discipline按照先Red Cards再Yellow Cards进行排序
 #print (discipline.sort_values(by=['Red Cards','Yellow Cards'],ascending=False))
@@ -144,5 +144,34 @@ df = euro12[euro12['Team'].str.startswith('G')]
 
 # -- 找到英格兰(England)、意大利(Italy)和俄罗斯(Russia)的射正率(Shooting Accuracy)
 df = euro12[euro12['Team'].isin(['England','Italy','Russia'])][['Team','Shooting Accuracy']]
-print (df)
-print (euro12.loc[euro12['Team'].isin(['England','Italy','Russia']),['Team','Shooting Accuracy']])
+#print (df)
+#print (euro12.loc[euro12['Team'].isin(['England','Italy','Russia']),['Team','Shooting Accuracy']])
+
+print ('----------------------------------')
+
+'''
+#####练习3-数据分组
+
+探索酒类消费数据
+-- 将数据框命名为drinks
+-- 哪个大陆(continent)平均消耗的啤酒(beer)更多？
+-- 打印出每个大陆(continent)的红酒消耗(wine_servings)的描述性统计值
+-- 打印出每个大陆每种酒类别的消耗平均值
+-- 打印出每个大陆每种酒类别的消耗中位数
+-- 打印出每个大陆对spirit饮品消耗的平均值，最大值和最小值
+'''
+
+# -- 将数据框命名为drinks
+PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
+path = os.path.join(PROJECT_ROOT,'Pandas_exercises-master/drinks.csv')
+drinks = pd.read_csv(path)
+print (drinks)
+print (drinks.columns)
+print (drinks['continent'].unique())
+
+# -- 哪个大陆(continent)平均消耗的啤酒(beer)更多？
+# -- 打印出每个大陆(continent)的红酒消耗(wine_servings)的描述性统计值
+# -- 打印出每个大陆每种酒类别的消耗平均值
+# -- 打印出每个大陆每种酒类别的消耗中位数
+# -- 打印出每个大陆对spirit饮品消耗的平均值，最大值和最小值
+
