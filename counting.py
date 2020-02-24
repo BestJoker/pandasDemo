@@ -7,7 +7,7 @@ from datetime import datetime,date,timedelta
 
 
 #不同人群的观看人数和平均观看时长数据组合
-def numExcelSheet(df):
+def numExcelSheet(df,dateStr):
     print (df.columns)
     # 获取不同用户群的数量
     print (df['用户身份'].shape[0])
@@ -35,6 +35,29 @@ def numExcelSheet(df):
     print ('社员平均时长' + ':' + str(member_time))
     print ('老注册平均时长' + ':' + str(old_time))
     print ('新注册平均时长' + ':' + str(new_time))
+
+    share_path = '/Users/fujinshi/Desktop/多人讨论/多人讨论分享/' + dateStr + '分享.csv'
+    joiner_path = '/Users/fujinshi/Desktop/多人讨论/多人讨论上座明细/' + dateStr + '上座明细.xlsx'
+    all_share_num = 0
+    joiner_share_num = 0
+    onlooker_share_num = 0
+    try:
+        share_df = pd.read_csv(share_path)
+        joiner_df = pd.read_excel(joiner_path)
+    except IOError:
+        print('没有找到文件')
+    else:
+        print ('可以执行')
+        # 读取excel中原始数据
+        share_df = pd.read_csv(share_path)
+        joiner_df = pd.read_excel(joiner_path)
+        share_id_df = share_df['登录 ID']
+        joiner_id_df = joiner_df['用户ID']
+        all_share_num = share_id_df.shape[0]
+        result_share_df = pd.merge(share_df,joiner_id_df,left_on='登录 ID',right_on='用户ID',how='inner')
+        joiner_share_num = result_share_df[result_share_df['登录 ID'] == result_share_df['用户ID']].shape[0]
+        onlooker_share_num = all_share_num - joiner_share_num
+
     data = {
         '日期': date,
         '主题': topic,
@@ -45,9 +68,14 @@ def numExcelSheet(df):
         '总人均时长': total_time,
         '社员人均时长': member_time,
         '老注册人均时长': old_time,
-        '新注册人均时长': new_time
+        '新注册人均时长': new_time,
+        '分享用户数':all_share_num,
+        '上座用户数':joiner_share_num,
+        '围观用户数':onlooker_share_num
     }
     new = pd.DataFrame(data, index=['0'])
+    print ('^^^^^^^^^^拼接好的数据：')
+    print (new)
     return new
 
 #时长分布区间
@@ -129,7 +157,7 @@ def keepExcelSheet(df,keep_series,every_df):
 result_path = '/Users/fujinshi/Desktop/多人讨论/多人讨论围观明细数据/多人讨论汇总数据.xlsx'
 
 num_dataFrame = pd.DataFrame(
-    columns=['日期', '主题', '总围观人数', '社员围观人数', '老注册围观人数', '新注册围观人数', '总人均时长', '社员人均时长', '老注册人均时长', '新注册人均时长'])
+    columns=['日期', '主题', '总围观人数', '社员围观人数', '老注册围观人数', '新注册围观人数', '总人均时长', '社员人均时长', '老注册人均时长', '新注册人均时长','分享用户数','上座用户数','围观用户数'])
 print (num_dataFrame)
 
 time_interval_dataFrame = pd.DataFrame(columns=['日期','总围观人数','1分钟以内','1~5分钟','5~10分钟','10~20分钟','20~30分钟','30~60分钟','60~90分钟','90分钟以上','5分钟以内','30分钟以上','60分钟以上','---','社员日期','社员围观人数','社员1分钟以内','社员1~5分钟','社员5~10分钟','社员10~20分钟','社员20~30分钟','社员30~60分钟','社员60~90分钟','社员90分钟以上','社员5分钟以内占比','社员10分钟以内占比','社员30分钟以上占比'])
@@ -141,7 +169,7 @@ end_str = yesterday = (date.today() + timedelta(days = -1)).strftime("%Y-%m-%d")
 keep_series = pd.Series()#存放留存天数内所有用户ID，去重
 dic = {}#存放每天访问用id，用户比较用户某天是否来过
 keep_days = 5#留存包含最新的日期的几天
-list = list(pd.date_range(start='2020-02-18', end=end_str))
+list = list(pd.date_range(start='2020-02-10', end=end_str))
 
 for x in list:
     # 生成时间，就是表格名称
@@ -160,8 +188,10 @@ for x in list:
         df = pd.read_excel(path)
 
         #获取观看人数和时间的方法
-        new_num_df = numExcelSheet(df)
+        new_num_df = numExcelSheet(df,dateStr)
         num_dataFrame = num_dataFrame.append(new_num_df, ignore_index=True)
+        print ('&&&&&&存储的拼接数据：')
+        print (num_dataFrame)
         #num_dataFrame存储的就是不同人群的观看人数和时长
 
         #获取人均观看时长分段数据
@@ -229,6 +259,8 @@ for i in range(0,len(total_class_series.index)):
     join_count_df.loc[i,'比例'] = num / every_df['参与次数'].shape[0]
 
 writer = pd.ExcelWriter(result_path)
+print ('********保存的数据：')
+print (num_dataFrame)
 num_dataFrame.to_excel(excel_writer=writer, sheet_name='主题维度分人群数据', index=None)
 time_interval_dataFrame.to_excel(excel_writer=writer, sheet_name='平均时长分布', index=None)
 join_count_df.T.to_excel(excel_writer=writer,sheet_name='围观用户天数分布')
