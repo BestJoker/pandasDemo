@@ -27,7 +27,8 @@ def getTopicWithDateStr(dateStr):
         '02-20': '【58天互动学习场】高手是如何用OKR实现目标的？',
         '02-21': '【58天互动学习场】怎样通过用户行为习惯读懂用户需求变化？',
         '02-22': '【58天互动学习场】传统企业进行数字化转型升级，如何避免踩坑？',
-        '02-23': '【58天互动学习场】企业面临现金流大考，如何行动才能转危为安？'
+        '02-23': '【58天互动学习场】企业面临现金流大考，如何行动才能转危为安？',
+        '02-24': '【58天互动学习场】中美贸易战，对我们普通人有什么影响？'
     }
     topic = topic_dic[dateStr]
     return topic
@@ -136,7 +137,7 @@ def handing_joiner_excel(path,current_date_str):
 #     #生成时间，就是表格名称
 #     dateStr = x.strftime('%m-%d')
 
-dateStr = '02-23'
+dateStr = '02-24'
 #生成表格路径
 path = '/Users/fujinshi/Desktop/多人讨论/多人讨论围观明细数据/' + dateStr + '.xlsx'
 print (path)

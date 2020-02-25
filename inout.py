@@ -19,7 +19,7 @@ print (result_df)
 
 #构建一个表格数据，映射日期和主题和topic以及起始时间，总时长
 start_date = '2020-02-03'
-end_date = '2020-02-20'
+end_date = '2020-02-24'
 info_series = pd.date_range(start=start_date,end=end_date,freq='D')
 info_df = pd.DataFrame(columns=['日期','主题','topic_id','开始时间','结束时间'])
 info_df['日期'] = info_series

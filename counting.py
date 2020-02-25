@@ -169,7 +169,7 @@ end_str = yesterday = (date.today() + timedelta(days = -1)).strftime("%Y-%m-%d")
 keep_series = pd.Series()#存放留存天数内所有用户ID，去重
 dic = {}#存放每天访问用id，用户比较用户某天是否来过
 keep_days = 5#留存包含最新的日期的几天
-list = list(pd.date_range(start='2020-02-10', end=end_str))
+list = list(pd.date_range(start='2020-02-20', end=end_str))
 
 for x in list:
     # 生成时间，就是表格名称
@@ -190,8 +190,6 @@ for x in list:
         #获取观看人数和时间的方法
         new_num_df = numExcelSheet(df,dateStr)
         num_dataFrame = num_dataFrame.append(new_num_df, ignore_index=True)
-        print ('&&&&&&存储的拼接数据：')
-        print (num_dataFrame)
         #num_dataFrame存储的就是不同人群的观看人数和时长
 
         #获取人均观看时长分段数据
@@ -259,8 +257,6 @@ for i in range(0,len(total_class_series.index)):
     join_count_df.loc[i,'比例'] = num / every_df['参与次数'].shape[0]
 
 writer = pd.ExcelWriter(result_path)
-print ('********保存的数据：')
-print (num_dataFrame)
 num_dataFrame.to_excel(excel_writer=writer, sheet_name='主题维度分人群数据', index=None)
 time_interval_dataFrame.to_excel(excel_writer=writer, sheet_name='平均时长分布', index=None)
 join_count_df.T.to_excel(excel_writer=writer,sheet_name='围观用户天数分布')
