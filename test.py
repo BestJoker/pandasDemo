@@ -166,24 +166,67 @@ PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(PROJECT_ROOT,'Pandas_exercises-master/drinks.csv')
 drinks = pd.read_csv(path)
 print (drinks)
-print (drinks.columns)
-print (drinks['continent'].unique())
 
 # -- 哪个大陆(continent)平均消耗的啤酒(beer)更多？
 df = drinks[['continent','beer_servings']].groupby(by=['continent']).mean().sort_values(by=['beer_servings'],ascending=False)
-print (df.head(1))
+#print (df.head(1))
 
 # -- 打印出每个大陆(continent)的红酒消耗(wine_servings)的描述性统计值
-print (drinks.groupby(by=['continent']).wine_servings.describe())
+#print (drinks.groupby(by=['continent']).wine_servings.describe())
 
 
 # -- 打印出每个大陆每种酒类别的消耗平均值
-print (drinks.groupby(by=['continent']).mean())
+#print (drinks.groupby(by=['continent']).mean())
 
 # -- 打印出每个大陆每种酒类别的消耗中位数
-print (drinks.groupby(by=['continent']).median())
+#print (drinks.groupby(by=['continent']).median())
 
 # -- 打印出每个大陆对spirit饮品消耗的平均值，最大值和最小值
-print (drinks.groupby(by=['continent']).spirit_servings.describe())
+#print (drinks.groupby(by=['continent']).spirit_servings.describe())
+
+
+'''
+#####练习4-Apply函数
+探索1960 - 2014 美国犯罪数据
+-- 将数据框命名为crime
+-- 每一列(column)的数据类型是什么样的？
+-- 将Year的数据类型转换为 datetime64
+-- 将列Year设置为数据框的索引
+-- 删除名为Total的列
+-- 按照Year（每十年）对数据框进行分组并求和
+-- 何时是美国历史上生存最危险的年代？
+'''
+
+# -- 将数据框命名为crime
+PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
+path = os.path.join(PROJECT_ROOT,'Pandas_exercises-master/US_Crime_Rates_1960_2014.csv')
+crime = pd.read_csv(path)
+
+print (crime.head(15))
+print (crime.columns)
+
+# -- 每一列(column)的数据类型是什么样的？
+print (crime.info())
+
+# -- 将Year的数据类型转换为 datetime64
+crime.Year = pd.to_datetime(crime['Year'],format='%Y')
+print (df)
+
+# -- 将列Year设置为数据框的索引
+crime = crime.set_index('Year',drop=True)
+print (crime)
+
+# -- 删除名为Total的列
+del crime['Total']
+print (crime.info())
+
+# -- 按照Year（每十年）对数据框进行分组并求和
+crimes = crime.resample('10AS').sum()
+population = crime.resample('10AS').max()
+crimes['Population'] = population
+print (crimes)
+
+# -- 何时是美国历史上生存最危险的年代？
+print (crimes.idxmax(0))
 
 
