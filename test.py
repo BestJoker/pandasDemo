@@ -2,6 +2,8 @@
 import pandas as pd
 import numpy as np
 import os
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 #练习地址：https://www.cnblogs.com/rango-lhl/p/9729334.html
 #数据集地址：https://github.com/Rango-2017/Pandas_exercises
@@ -201,32 +203,174 @@ df = drinks[['continent','beer_servings']].groupby(by=['continent']).mean().sort
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(PROJECT_ROOT,'Pandas_exercises-master/US_Crime_Rates_1960_2014.csv')
 crime = pd.read_csv(path)
-
-print (crime.head(15))
-print (crime.columns)
-
-# -- 每一列(column)的数据类型是什么样的？
-print (crime.info())
+#print (crime.head(15))
+#print (crime.info())
 
 # -- 将Year的数据类型转换为 datetime64
 crime.Year = pd.to_datetime(crime['Year'],format='%Y')
-print (df)
+#print (df)
 
 # -- 将列Year设置为数据框的索引
 crime = crime.set_index('Year',drop=True)
-print (crime)
+#print (crime)
 
 # -- 删除名为Total的列
 del crime['Total']
-print (crime.info())
+#print (crime.info())
 
 # -- 按照Year（每十年）对数据框进行分组并求和
 crimes = crime.resample('10AS').sum()
 population = crime.resample('10AS').max()
 crimes['Population'] = population
-print (crimes)
+#print (crimes)
 
 # -- 何时是美国历史上生存最危险的年代？
-print (crimes.idxmax(0))
+#print (crimes.idxmax(0))
 
+
+'''
+#####练习5-合并¶
+
+探索虚拟姓名数据
+-- 创建DataFrame
+-- 将上述的DataFrame分别命名为data1, data2, data3
+-- 将data1和data2两个数据框按照行的维度进行合并，命名为all_data
+-- 将data1和data2两个数据框按照列的维度进行合并，命名为all_data_col
+-- 打印data3
+-- 按照subject_id的值对all_data和data3作合并
+-- 对data1和data2按照subject_id作内连接
+-- 找到 data1 和 data2 合并之后的所有匹配结果
+'''
+
+# -- 创建DataFrame
+raw_data_1 = {
+        'subject_id': ['1', '2', '3', '4', '5'],
+        'first_name': ['Alex', 'Amy', 'Allen', 'Alice', 'Ayoung'],
+        'last_name': ['Anderson', 'Ackerman', 'Ali', 'Aoni', 'Atiches']}
+
+raw_data_2 = {
+        'subject_id': ['4', '5', '6', '7', '8'],
+        'first_name': ['Billy', 'Brian', 'Bran', 'Bryce', 'Betty'],
+        'last_name': ['Bonder', 'Black', 'Balwner', 'Brice', 'Btisan']}
+
+raw_data_3 = {
+        'subject_id': ['1', '2', '3', '4', '5', '7', '8', '9', '10', '11'],
+        'test_id': [51, 15, 15, 61, 16, 14, 15, 1, 61, 16]}
+
+# -- 将上述的DataFrame分别命名为data1, data2, data3
+
+data1 = pd.DataFrame(raw_data_1)
+data2 = pd.DataFrame(raw_data_2)
+data3 = pd.DataFrame(raw_data_3)
+
+# -- 将data1和data2两个数据框按照行的维度进行合并，命名为all_data
+all_data = pd.concat([data1,data2],axis=0)
+# print (all_data)
+
+# -- 将data1和data2两个数据框按照列的维度进行合并，命名为all_data_col
+all_data_col = pd.concat([data1,data2],axis=1)
+# print (all_data_col)
+
+# -- 打印data3
+# print (data3)
+
+# -- 按照subject_id的值对all_data和data3作合并
+df = pd.merge(all_data,data3,on='subject_id')
+# print (df)
+
+# -- 对data1和data2按照subject_id作内连接
+df = pd.merge(data1,data2,on='subject_id',how='inner')
+#print (df)
+
+# -- 找到 data1 和 data2 合并之后的所有匹配结果
+pd.merge(data1,data2,on='subject_id',how='outer')
+
+
+'''
+#####练习6-统计
+探索风速数据
+-- 将数据作存储并且设置前三列为合适的索引
+-- 2061年？我们真的有这一年的数据？创建一个函数并用它去修复这个bug
+-- 将日期设为索引，注意数据类型，应该是datetime64[ns]
+-- 对应每一个location，一共有多少数据值缺失
+-- 对应每一个location，一共有多少完整的数据值
+-- 对于全体数据，计算风速的平均值
+-- 创建一个名为loc_stats的数据框去计算并存储每个location的风速最小值，最大值，平均值和标准差
+-- 创建一个名为day_stats的数据框去计算并存储所有location的风速最小值，最大值，平均值和标准差
+-- 对于每一个location，计算一月份的平均风速
+-- 对于数据记录按照年为频率取样
+-- 对于数据记录按照月为频率取样
+'''
+
+# -- 将数据作存储并且设置前三列为合适的索引
+PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
+path = os.path.join(PROJECT_ROOT,'Pandas_exercises-master/wind.csv')
+wind = pd.read_csv(path)
+#print (wind.head(20))
+#print (wind.columns)
+
+# -- 2061年？我们真的有这一年的数据？创建一个函数并用它去修复这个bug
+# -- 将日期设为索引，注意数据类型，应该是datetime64[ns]
+# -- 对应每一个location，一共有多少数据值缺失
+# -- 对应每一个location，一共有多少完整的数据值
+# -- 对于全体数据，计算风速的平均值
+# -- 创建一个名为loc_stats的数据框去计算并存储每个location的风速最小值，最大值，平均值和标准差
+# -- 创建一个名为day_stats的数据框去计算并存储所有location的风速最小值，最大值，平均值和标准差
+# -- 对于每一个location，计算一月份的平均风速
+# -- 对于数据记录按照年为频率取样
+# -- 对于数据记录按照月为频率取样
+
+
+
+'''
+#####练习7-可视化
+探索泰坦尼克灾难数据
+-- 将数据框命名为titanic
+-- 将PassengerId设置为索引
+-- 绘制一个展示男女乘客比例的扇形图
+-- 绘制一个展示船票Fare, 与乘客年龄和性别的散点图
+-- 有多少人生还？
+-- 绘制一个展示船票价格的直方图
+'''
+
+# -- 将数据框命名为titanic
+PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
+path = os.path.join(PROJECT_ROOT,'Pandas_exercises-master/train.csv')
+titanic = pd.read_csv(path)
+print (titanic.head(10))
+print (titanic.columns)
+
+# -- 将PassengerId设置为索引
+titanic = titanic.set_index('PassengerId')
+print (titanic.head(10))
+
+# -- 绘制一个展示男女乘客比例的扇形图
+Male = (titanic.Sex == 'male').sum()
+Female = (titanic.Sex == 'female').sum()
+proportions = [Male,Female]
+plt.pie(proportions,labels=['Male','Female'],shadow=True,autopct='%1.1f%%',startangle=90,explode=(0.15,0))
+plt.axis('equal')
+plt.title('Sex Propertion')
+plt.tight_layout()
+plt.show()
+
+# -- 绘制一个展示船票Fare, 与乘客年龄和性别的散点图
+# lm = sns.lmplot(x='Age',y='Fare',data=titanic,hue='Sex',fit_reg=False)
+# lm.set(title='Fare x Age')
+# #设置坐标轴取值范围
+# axes = lm.axes
+# axes[0,0].set_ylim(-5,)
+# axes[0,0].set_xlim(-5,85)
+
+# -- 有多少人生还？
+titanic.Survived.sum()
+
+
+# -- 绘制一个展示船票价格的直方图
+df = titanic.Fare.sort_values(ascending=False)
+plt.hist(df,bins=(np.arange(0,600,100)))
+plt.xlabel('Fare')
+plt.ylabel('Frequency')
+plt.title('Fare Payed Histrogram')
+plt.show()
 
