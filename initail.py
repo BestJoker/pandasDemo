@@ -78,35 +78,31 @@ def handing_excel(path,current_date_str):
 
     #读取excel中原始数据
     df = pd.read_excel(path)
-    print (df.head(15))
-    print ('-'*10)
+    # print (df.head(15))
+    # print ('-'*10)
 
     # 取出所有关于互动学习主题的内容
     topic = getTopicWithDateStr(dateStr)
     df1 = df[df['主题']==topic]
-    print (df1.head(10))
-    print ('-'*30)
+    # print (df1.head(10))
+    # print (df1.columns)
+    # print ('-'*30)
 
     #根据userid分类，然后计算用户的总时长
     df2 = df1.groupby(by=['用户ID']).agg({'围观时长(min)':'sum'})
     df2 = df2.reset_index()
-    print (df2.head(5))
-    print (df2.shape)
+
     #扔掉其他不需要的数据，并且去掉用户ID重复项
-    df1.drop(['房间ID','房间','房主','围观时长(min)'],axis=1,inplace=True)
+    df1.drop(['围观时长(min)'],axis=1,inplace=True)
     df1.drop_duplicates(subset=['用户ID'], keep='first', inplace=True)
     #合并
     data = pd.merge(df1, df2, on='用户ID', how='left')
-    print (data.head(10))
-    print (data.columns)
-    print (data.shape)
 
     print (data.columns.values)
     if '用户身份' in data.columns.values:
         if data['用户身份'].shape[0] != data.shape[0]:
             print ('用户身份有残缺')
             data['用户身份'] = df.apply(lambda row: getUserIdentityStr(row['is_member'], row['用户创建时间']), axis=1)
-            print (data['用户身份'].value_counts())
         else:
             print ('已经处理过用户身份了')
     else:
@@ -126,9 +122,11 @@ def handing_excel(path,current_date_str):
         #处理用户分布
         print ('需要增加时长分布列')
         data['时长分布'] = df.apply(lambda row:getTime(row['围观时长(min)']),axis=1)
-        print (data['时长分布'].value_counts())
 
     print (data.head(10))
+    print (data.columns)
+    print (data['时长分布'].value_counts())
+    print (data['用户身份'].value_counts())
 
     # # 生成excel的编辑器,拆解主题然后保存到对应额sheet中
     writer = pd.ExcelWriter(path)
