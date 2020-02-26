@@ -130,7 +130,7 @@ def handing_excel(path,current_date_str):
 
     # # 生成excel的编辑器,拆解主题然后保存到对应额sheet中
     writer = pd.ExcelWriter(path)
-    data.to_excel(excel_writer = writer,sheet_name = topic,index=None)
+    data.to_excel(excel_writer = writer,sheet_name = current_date_str,index=None)
     writer.save()
     writer.close()
     print ('保存成功')
@@ -147,22 +147,31 @@ def handing_joiner_excel(path,current_date_str):
     df = pd.read_excel(path)
     topic = getTopicWithDateStr(current_date_str)
     df = df[df['主题'] == topic]
+    print (dateStr+'+' + topic)
     writer = pd.ExcelWriter(path)
-    df.to_excel(excel_writer = writer,sheet_name = current_date_str,index=None)
+    df.to_excel(excel_writer = writer,sheet_name=dateStr,index=None)
     writer.save()
     writer.close()
 
-# for x in list(pd.date_range(start='2020-02-20',end='2020-02-23')):
-#     #生成时间，就是表格名称
-#     dateStr = x.strftime('%m-%d')
 
-dateStr = '02-24'
-#生成表格路径
-path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/' + dateStr + '围观.xlsx'
-print ('initail:' + path)
-# 读取文件（文件夹中文件）
-handing_excel(path,dateStr)
+def initail(dateStr):
+    # 生成表格路径
+    path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/' + dateStr + '围观.xlsx'
+    print ('initail:' + path)
+    # 读取文件（文件夹中文件）
+    handing_excel(path, dateStr)
 
-joiner_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/上座明细/' + dateStr + '上座.xlsx'
-# 读取文件（文件夹中文件）
-handing_joiner_excel(joiner_path,dateStr)
+    joiner_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/上座明细/' + dateStr + '上座.xlsx'
+    # 读取文件（文件夹中文件）
+    handing_joiner_excel(joiner_path, dateStr)
+
+
+for x in list(pd.date_range(start='2020-02-03',end='2020-02-25')):
+    #生成时间，就是表格名称
+    dateStr = x.strftime('%m-%d')
+    initail(dateStr)
+
+# dateStr = '02-24'
+# initail(dateStr)
+
+
