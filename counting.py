@@ -10,10 +10,6 @@ from initail import getTopicWithDateStr
 #不同人群的观看人数和平均观看时长数据组合
 def numExcelSheet(df,dateStr):
     print (df.columns)
-    # 获取不同用户群的数量
-    print (df['用户身份'].shape[0])
-    print (type(df['用户身份'].value_counts()))
-    print (df['用户身份'].value_counts())
     # 获取不同用户身份的数量分布
     class_series = df['用户身份'].value_counts()
     date = df['日期'][0]
@@ -38,7 +34,7 @@ def numExcelSheet(df,dateStr):
     print ('新注册平均时长' + ':' + str(new_time))
 
     share_path = '/Users/fujinshi/Desktop/多人讨论/多人讨论分享/' + dateStr + '分享.csv'
-    joiner_path = '/Users/fujinshi/Desktop/多人讨论/多人讨论上座明细/' + dateStr + '上座明细.xlsx'
+    joiner_path = '/Users/fujinshi/Desktop/多人讨论/多人讨论上座明细/' + dateStr + '上座.xlsx'
     all_share_num = 0
     joiner_share_num = 0
     onlooker_share_num = 0
@@ -155,7 +151,6 @@ def keepExcelSheet(df,keep_series,every_df):
     print (keep_series.shape)
 
 
-result_path = '/Users/fujinshi/Desktop/多人讨论/多人讨论围观明细数据/多人讨论汇总数据.xlsx'
 
 num_dataFrame = pd.DataFrame(
     columns=['日期', '主题', '总围观人数', '社员围观人数', '老注册围观人数', '新注册围观人数', '总人均时长', '社员人均时长', '老注册人均时长', '新注册人均时长','分享用户数','上座用户数','围观用户数'])
@@ -170,13 +165,14 @@ end_str = yesterday = (date.today() + timedelta(days = -1)).strftime("%Y-%m-%d")
 keep_series = pd.Series()#存放留存天数内所有用户ID，去重
 dic = {}#存放每天访问用id，用户比较用户某天是否来过
 keep_days = 5#留存包含最新的日期的几天
-list = list(pd.date_range(start='2020-02-21', end=end_str))
+list = list(pd.date_range(start='2020-02-24', end=end_str))
 
 for x in list:
     # 生成时间，就是表格名称
     dateStr = x.strftime('%m-%d')
     # 生成表格路径
-    path = '/Users/fujinshi/Desktop/多人讨论/多人讨论围观明细数据/' + dateStr + '.xlsx'
+    path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/' + dateStr + '围观.xlsx'
+    print ('*'*20)
     print (path)
     # 判断如果没有文件则直接跳过，如果有文件则正常读取
     try:
@@ -257,6 +253,7 @@ for i in range(0,len(total_class_series.index)):
     join_count_df.loc[i,'人数'] = num
     join_count_df.loc[i,'比例'] = num / every_df['参与次数'].shape[0]
 
+result_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/多人讨论汇总数据.xlsx'
 writer = pd.ExcelWriter(result_path)
 num_dataFrame.to_excel(excel_writer=writer, sheet_name='主题维度分人群数据', index=None)
 time_interval_dataFrame.to_excel(excel_writer=writer, sheet_name='平均时长分布', index=None)

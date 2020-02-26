@@ -158,10 +158,10 @@ def handing_joiner_excel(path,current_date_str):
 #     #生成时间，就是表格名称
 #     dateStr = x.strftime('%m-%d')
 
-dateStr = '02-25'
+dateStr = '02-24'
 #生成表格路径
-path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/' + dateStr + '.xlsx'
-print (path)
+path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/' + dateStr + '围观.xlsx'
+print ('initail:' + path)
 # 读取文件（文件夹中文件）
 handing_excel(path,dateStr)
 
