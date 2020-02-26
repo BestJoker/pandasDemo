@@ -128,12 +128,14 @@ def handing_excel(path,current_date_str):
         data['时长分布'] = df.apply(lambda row:getTime(row['围观时长(min)']),axis=1)
         print (data['时长分布'].value_counts())
 
-    print (data)
+    print (data.head(10))
 
     # # 生成excel的编辑器,拆解主题然后保存到对应额sheet中
     writer = pd.ExcelWriter(path)
+    data.to_excel(excel_writer = writer,sheet_name = topic,index=None)
     writer.save()
     writer.close()
+    print ('保存成功')
 
 def handing_joiner_excel(path,current_date_str):
     # 判断如果没有文件则直接跳过，如果有文件则正常读取
