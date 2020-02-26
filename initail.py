@@ -163,6 +163,6 @@ print ('initail:' + path)
 # 读取文件（文件夹中文件）
 handing_excel(path,dateStr)
 
-# joiner_path = '/Users/fujinshi/Desktop/多人讨论/多人讨论上座明细/' + dateStr + '上座明细.xlsx'
-# # 读取文件（文件夹中文件）
-# handing_joiner_excel(joiner_path,dateStr)
+joiner_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/上座明细/' + dateStr + '上座.xlsx'
+# 读取文件（文件夹中文件）
+handing_joiner_excel(joiner_path,dateStr)
