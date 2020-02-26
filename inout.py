@@ -33,8 +33,7 @@ for x in list(pd.date_range(start=start_date,end=end_date)):
     df = pd.read_excel(path)
     #找到对应日期主题，根据主题筛选数据
     topic = getTopicWithDateStr(dateStr)
-    df = df[df['主题名称::filter'] == topic]
-
+    df = df[df['主题名称::filter'].str.contains(topic)].reset_index(drop=True)
     # 将时间一列拆分开
     df['日期筛选系列'] = df['分钟'].str[0:5] > df['the_day'].str[5:10]
     df['时间'] = df['分钟'].str[6:11]
