@@ -29,7 +29,7 @@ def getTopicWithDateStr(dateStr):
         '02-22': '【58天互动学习场】传统企业进行数字化转型升级，如何避免踩坑？',
         '02-23': '【58天互动学习场】企业面临现金流大考，如何行动才能转危为安？',
         '02-24': '【58天互动学习场】中美贸易战，对我们普通人有什么影响？',
-        '02-25':'【互动学习场】 线上教育备受关注，如何借力新势能设计爆品课程？'
+        '02-25':'【58天互动学习场】 线上教育备受关注，如何借力新势能设计爆品课程？'
     }
     topic = topic_dic[dateStr]
     return topic
@@ -97,6 +97,8 @@ def handing_excel(path,current_date_str):
     df1.drop_duplicates(subset=['用户ID'], keep='first', inplace=True)
     #合并
     data = pd.merge(df1, df2, on='用户ID', how='left')
+    # print ('$'*30)
+    # print (data.head(16))
 
     print (data.columns.values)
     if '用户身份' in data.columns.values:
@@ -109,7 +111,6 @@ def handing_excel(path,current_date_str):
         #处理用户分布
         print ('需要增加用户身份列')
         data['用户身份'] = df.apply(lambda row:getUserIdentityStr(row['is_member'],row['用户创建时间']),axis=1)
-        print (data['用户身份'].value_counts())
 
     if '时长分布' in data.columns.values:
         if data['时长分布'].shape[0] != data.shape[0]:
@@ -123,12 +124,12 @@ def handing_excel(path,current_date_str):
         print ('需要增加时长分布列')
         data['时长分布'] = df.apply(lambda row:getTime(row['围观时长(min)']),axis=1)
 
-    # print (data.head(10))
-    # print (data.columns)
+    print (data.head(10))
+    print (data.columns)
     # print (data['时长分布'].value_counts())
     # print (data['用户身份'].value_counts())
 
-    # # 生成excel的编辑器,拆解主题然后保存到对应额sheet中
+    # 生成excel的编辑器,拆解主题然后保存到对应额sheet中
     writer = pd.ExcelWriter(path)
     data.to_excel(excel_writer = writer,sheet_name = current_date_str,index=None)
     writer.save()
@@ -171,7 +172,7 @@ def initail(dateStr):
 #     dateStr = x.strftime('%m-%d')
 #     initail(dateStr)
 
-# dateStr = '02-24'
-# initail(dateStr)
+dateStr = '02-25'
+initail(dateStr)
 
 

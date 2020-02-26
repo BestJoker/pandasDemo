@@ -31,8 +31,8 @@ def numExcelSheet(df,dateStr):
     print ('老注册平均时长' + ':' + str(old_time))
     print ('新注册平均时长' + ':' + str(new_time))
 
-    share_path = '/Users/fujinshi/Desktop/多人讨论/多人讨论分享/' + dateStr + '分享.csv'
-    joiner_path = '/Users/fujinshi/Desktop/多人讨论/多人讨论上座明细/' + dateStr + '上座.xlsx'
+    share_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/多人讨论分享/' + dateStr + '分享.csv'
+    joiner_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/上座明细/' + dateStr + '上座.xlsx'
     all_share_num = 0
     joiner_share_num = 0
     onlooker_share_num = 0
@@ -91,6 +91,10 @@ def timeIntervalExcelSheet(df):
     total_5 = total_0_1+total_1_5
     total_30_up = total_30_60+total_60_90+total_90
     total_60_up = total_60_90+total_90
+    total_5_rate = ((total_0_1+total_1_5) / total_num)
+    total_10_rate = ((total_0_1+total_1_5+total_5_10) / total_num)
+    total_30_up_rate = ((total_30_60+total_60_90+total_90) / total_num)
+
 
     member_class_series = df[df['用户身份']=='社员']['时长分布'].value_counts()
     print (member_class_series)
@@ -121,6 +125,9 @@ def timeIntervalExcelSheet(df):
         '5分钟以内':total_5,
         '30分钟以上':total_30_up,
         '60分钟以上':total_60_up,
+        '5分钟以内占比':total_5_rate,
+        '10分钟以内占比':total_10_rate,
+        '30分钟以上占比':total_30_up_rate,
         '---':'',
         '社员日期':date,
         '社员围观人数': member_num,
@@ -154,7 +161,7 @@ num_dataFrame = pd.DataFrame(
     columns=['日期', '主题', '总围观人数', '社员围观人数', '老注册围观人数', '新注册围观人数', '总人均时长', '社员人均时长', '老注册人均时长', '新注册人均时长','分享用户数','上座用户数','围观用户数'])
 print (num_dataFrame)
 
-time_interval_dataFrame = pd.DataFrame(columns=['日期','总围观人数','1分钟以内','1~5分钟','5~10分钟','10~20分钟','20~30分钟','30~60分钟','60~90分钟','90分钟以上','5分钟以内','30分钟以上','60分钟以上','---','社员日期','社员围观人数','社员1分钟以内','社员1~5分钟','社员5~10分钟','社员10~20分钟','社员20~30分钟','社员30~60分钟','社员60~90分钟','社员90分钟以上','社员5分钟以内占比','社员10分钟以内占比','社员30分钟以上占比'])
+time_interval_dataFrame = pd.DataFrame(columns=['日期','总围观人数','1分钟以内','1~5分钟','5~10分钟','10~20分钟','20~30分钟','30~60分钟','60~90分钟','90分钟以上','5分钟以内','30分钟以上','60分钟以上','5分钟以内占比','10分钟以内占比','30分钟以上占比','---','社员日期','社员围观人数','社员1分钟以内','社员1~5分钟','社员5~10分钟','社员10~20分钟','社员20~30分钟','社员30~60分钟','社员60~90分钟','社员90分钟以上','社员5分钟以内占比','社员10分钟以内占比','社员30分钟以上占比'])
 print (time_interval_dataFrame)
 
 #获取昨天日期
@@ -251,7 +258,7 @@ for i in range(0,len(total_class_series.index)):
     join_count_df.loc[i,'人数'] = num
     join_count_df.loc[i,'比例'] = num / every_df['参与次数'].shape[0]
 
-result_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/多人讨论汇总数据.xlsx'
+result_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/多人讨论区分付费汇总数据.xlsx'
 writer = pd.ExcelWriter(result_path)
 num_dataFrame.to_excel(excel_writer=writer, sheet_name='主题维度分人群数据', index=None)
 time_interval_dataFrame.to_excel(excel_writer=writer, sheet_name='平均时长分布', index=None)
