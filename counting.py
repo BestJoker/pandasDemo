@@ -4,8 +4,6 @@ import numpy as np
 import os
 import openpyxl
 from datetime import datetime,date,timedelta
-from initail import getTopicWithDateStr
-
 
 #不同人群的观看人数和平均观看时长数据组合
 def numExcelSheet(df,dateStr):
@@ -165,7 +163,7 @@ end_str = yesterday = (date.today() + timedelta(days = -1)).strftime("%Y-%m-%d")
 keep_series = pd.Series()#存放留存天数内所有用户ID，去重
 dic = {}#存放每天访问用id，用户比较用户某天是否来过
 keep_days = 5#留存包含最新的日期的几天
-list = list(pd.date_range(start='2020-02-24', end=end_str))
+list = list(pd.date_range(start='2020-02-03', end=end_str))
 
 for x in list:
     # 生成时间，就是表格名称

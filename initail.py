@@ -123,10 +123,10 @@ def handing_excel(path,current_date_str):
         print ('需要增加时长分布列')
         data['时长分布'] = df.apply(lambda row:getTime(row['围观时长(min)']),axis=1)
 
-    print (data.head(10))
-    print (data.columns)
-    print (data['时长分布'].value_counts())
-    print (data['用户身份'].value_counts())
+    # print (data.head(10))
+    # print (data.columns)
+    # print (data['时长分布'].value_counts())
+    # print (data['用户身份'].value_counts())
 
     # # 生成excel的编辑器,拆解主题然后保存到对应额sheet中
     writer = pd.ExcelWriter(path)
@@ -166,10 +166,10 @@ def initail(dateStr):
     handing_joiner_excel(joiner_path, dateStr)
 
 
-for x in list(pd.date_range(start='2020-02-03',end='2020-02-25')):
-    #生成时间，就是表格名称
-    dateStr = x.strftime('%m-%d')
-    initail(dateStr)
+# for x in list(pd.date_range(start='2020-02-03',end='2020-02-25')):
+#     #生成时间，就是表格名称
+#     dateStr = x.strftime('%m-%d')
+#     initail(dateStr)
 
 # dateStr = '02-24'
 # initail(dateStr)
