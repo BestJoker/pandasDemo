@@ -3,6 +3,7 @@ import numpy as np
 import os
 import openpyxl
 from datetime import datetime,date,timedelta
+from initail import getTopicWithDateStr
 
 #生成对应的结果列表（'是否为当日'，'时间'）
 orign_start_date = '2020-02-03 21:30'
@@ -30,11 +31,9 @@ for x in list(pd.date_range(start=start_date,end=end_date)):
     #生成表格路径
     path = '/Users/fujinshi/Desktop/多人讨论/多人讨论分钟跳失/' + dateStr + '分钟跳失.xlsx'
     df = pd.read_excel(path)
-    # 筛选出只有58天直播活动的
-    if dateStr == '02-08':
-        df = df[df['主题名称::filter'].str.contains('【58天互动学习场】单点破局')].reset_index(drop=True)
-    else:
-        df = df[df['主题名称::filter'].str.contains('【58天')].reset_index(drop=True)
+    #找到对应日期主题，根据主题筛选数据
+    topic = getTopicWithDateStr(dateStr)
+    df = df[df['主题名称::filter'] == topic]
 
     # 将时间一列拆分开
     df['日期筛选系列'] = df['分钟'].str[0:5] > df['the_day'].str[5:10]
@@ -42,8 +41,7 @@ for x in list(pd.date_range(start=start_date,end=end_date)):
 
     #开始处理信息
     #1.获取'主题', 'tipic_id', '开始时间', '结束时间', '总时长'
-    topic_name = df['主题名称::filter'].unique()[0]
-    info_df.loc[info_df['日期'] == x,'主题'] = topic_name
+    info_df.loc[info_df['日期'] == x,'主题'] = topic
     info_df.loc[info_df['日期'] == x,'topic_id'] = df['topic_id'][0]
     # #创建一个临时排序完成的df
     temp_df = df.sort_values(by=['分钟'],ascending=True)['分钟']

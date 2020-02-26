@@ -4,6 +4,7 @@ import numpy as np
 import os
 import openpyxl
 from datetime import datetime,date,timedelta
+from initail import getTopicWithDateStr
 
 
 #不同人群的观看人数和平均观看时长数据组合
