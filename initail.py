@@ -48,8 +48,10 @@ def handing_excel(path,current_date_str):
     df = pd.read_excel(path)
     print (df.shape[0])
     print (df.columns)
-    # 取出所有关于【58天直播】主题的内容
-    df1 = df[df['主题'].str.startswith('【58天')]
+
+    # 取出所有关于互动学习主题的内容
+    topic = getTopicWithDateStr(dateStr)
+    df1 = df[df['主题']==topic]
     df1['reset_index'] = range(0,df1.shape[0])
     df1=df1.set_index(['reset_index'])
     print (df1)
@@ -138,7 +140,7 @@ def handing_joiner_excel(path,current_date_str):
 #     #生成时间，就是表格名称
 #     dateStr = x.strftime('%m-%d')
 
-dateStr = '02-24'
+dateStr = '02-25'
 #生成表格路径
 path = '/Users/fujinshi/Desktop/多人讨论/多人讨论围观明细数据/' + dateStr + '.xlsx'
 print (path)
