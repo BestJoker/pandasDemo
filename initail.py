@@ -34,6 +34,38 @@ def getTopicWithDateStr(dateStr):
     topic = topic_dic[dateStr]
     return topic
 
+
+def getUserIdentityStr(is_member,create_date):
+    #转成字符串类型，避免有一些数据类型不正确
+    create_date = str(create_date)
+    create_date = create_date.split('T')[0]
+    if is_member == 1:
+        return '社员'
+    elif create_date < '2020-02-01':
+        return '老注册'
+    else:
+        return '新注册'
+
+def getTime(time):
+    time_class_str = ''
+    if (time < 1):
+        time_class_str = '1分钟以内'
+    elif time < 5:
+        time_class_str = '1~5分钟'
+    elif time < 10:
+        time_class_str = '5~10分钟'
+    elif time < 20:
+        time_class_str = '10~20分钟'
+    elif time < 30:
+        time_class_str = '20~30分钟'
+    elif time < 60:
+        time_class_str = '30~60分钟'
+    elif time < 90:
+        time_class_str = '60~90分钟'
+    else:
+        time_class_str = '90分钟以上'
+    return time_class_str
+
 def handing_excel(path,current_date_str):
     #判断如果没有文件则直接跳过，如果有文件则正常读取
     try:
@@ -46,75 +78,60 @@ def handing_excel(path,current_date_str):
 
     #读取excel中原始数据
     df = pd.read_excel(path)
-    print (df.shape[0])
-    print (df.columns)
+    print (df.head(15))
+    print ('-'*10)
 
     # 取出所有关于互动学习主题的内容
     topic = getTopicWithDateStr(dateStr)
     df1 = df[df['主题']==topic]
-    df1['reset_index'] = range(0,df1.shape[0])
-    df1=df1.set_index(['reset_index'])
-    print (df1)
-    # 插入两列，用户身份和时长分布
-    col_name = df1.columns.tolist()
-    person_bool = '用户身份' in col_name
-    time_bool = '时长分布' in col_name
-    print (str(person_bool) + '和' + str(time_bool))
-    if (person_bool & time_bool) == 1:
-        print ('都有了')
-    elif (person_bool == 0 and time_bool == 1):
-        col_name.insert(4, '用户身份')
-    elif (person_bool == 1 and time_bool == 0):
-        print ('没有时长分布，增加')
-        col_name.insert(5, '时长分布')
-    elif (person_bool == 0 and time_bool == 0):
-        col_name.insert(4, '用户身份')
-        col_name.insert(5, '时长分布')
-    df1 = df1.reindex(columns=col_name)
-    print (df1.columns.tolist())
+    print (df1.head(10))
+    print ('-'*30)
 
-    # len(df1['用户创建时间'])
-    for i in range(0, df1.shape[0]):  # len(df1['用户创建时间'])
-        # 根据is_member和用户创建时间将用户分为社员，老注册和新注册三类
-        orign_date_str = df1['用户创建时间'][i]
-        date_str = orign_date_str.split('T')[0]
-        if (df1['is_member'][i] == 1):
-            df1.loc[i, '用户身份'] = '社员'
-        elif date_str < '2020-02-01':
-            df1.loc[i, '用户身份'] = '老注册'
+    #根据userid分类，然后计算用户的总时长
+    df2 = df1.groupby(by=['用户ID']).agg({'围观时长(min)':'sum'})
+    df2 = df2.reset_index()
+    print (df2.head(5))
+    print (df2.shape)
+    #扔掉其他不需要的数据，并且去掉用户ID重复项
+    df1.drop(['房间ID','房间','房主','围观时长(min)'],axis=1,inplace=True)
+    df1.drop_duplicates(subset=['用户ID'], keep='first', inplace=True)
+    #合并
+    data = pd.merge(df1, df2, on='用户ID', how='left')
+    print (data.head(10))
+    print (data.columns)
+    print (data.shape)
+
+    print (data.columns.values)
+    if '用户身份' in data.columns.values:
+        if data['用户身份'].shape[0] != data.shape[0]:
+            print ('用户身份有残缺')
+            data['用户身份'] = df.apply(lambda row: getUserIdentityStr(row['is_member'], row['用户创建时间']), axis=1)
+            print (data['用户身份'].value_counts())
         else:
-            df1.loc[i, '用户身份'] = '新注册'
+            print ('已经处理过用户身份了')
+    else:
+        #处理用户分布
+        print ('需要增加用户身份列')
+        data['用户身份'] = df.apply(lambda row:getUserIdentityStr(row['is_member'],row['用户创建时间']),axis=1)
+        print (data['用户身份'].value_counts())
 
-        # 根据用户观看时长，将将用户分为一个区间
-        time = df1['围观时长(min)'][i]
-        time_class_str = ''
-        if (time < 1):
-            time_class_str = '1分钟以内'
-        elif time < 5:
-            time_class_str = '1~5分钟'
-        elif time < 10:
-            time_class_str = '5~10分钟'
-        elif time < 20:
-            time_class_str = '10~20分钟'
-        elif time < 30:
-            time_class_str = '20~30分钟'
-        elif time < 60:
-            time_class_str = '30~60分钟'
-        elif time < 90:
-            time_class_str = '60~90分钟'
+    if '时长分布' in data.columns.values:
+        if data['时长分布'].shape[0] != data.shape[0]:
+            print ('用户身份有残缺')
+            data['时长分布'] = df.apply(lambda row: getTime(row['围观时长(min)']), axis=1)
+            print (data['时长分布'].value_counts())
         else:
-            time_class_str = '90分钟以上'
-        df1.loc[i, '时长分布'] = time_class_str
+            print ('已经处理过时长分布了')
+    else:
+        #处理用户分布
+        print ('需要增加时长分布列')
+        data['时长分布'] = df.apply(lambda row:getTime(row['围观时长(min)']),axis=1)
+        print (data['时长分布'].value_counts())
 
-    print (df1[['用户ID', '用户身份', '时长分布']][0:100])
-    # 判断过滤出来的主题是否唯一，如果不唯一，则分成两个列表
-    list = df1['主题'].unique()
-    # 生成excel的编辑器,拆解主题然后保存到对应额sheet中
+    print (data)
+
+    # # 生成excel的编辑器,拆解主题然后保存到对应额sheet中
     writer = pd.ExcelWriter(path)
-    for i in range(0, len(list)):
-        topic = list[i]  # 选出对应主题
-        df2 = df1[df1['主题'] == topic]  # 将对应主题筛选出来
-        df2.to_excel(excel_writer=writer, sheet_name=current_date_str + '-' + str(i), index=None)
     writer.save()
     writer.close()
 
@@ -135,18 +152,17 @@ def handing_joiner_excel(path,current_date_str):
     writer.save()
     writer.close()
 
-
 # for x in list(pd.date_range(start='2020-02-20',end='2020-02-23')):
 #     #生成时间，就是表格名称
 #     dateStr = x.strftime('%m-%d')
 
 dateStr = '02-25'
 #生成表格路径
-path = '/Users/fujinshi/Desktop/多人讨论/多人讨论围观明细数据/' + dateStr + '.xlsx'
+path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/' + dateStr + '.xlsx'
 print (path)
 # 读取文件（文件夹中文件）
 handing_excel(path,dateStr)
 
-joiner_path = '/Users/fujinshi/Desktop/多人讨论/多人讨论上座明细/' + dateStr + '上座明细.xlsx'
-# 读取文件（文件夹中文件）
-handing_joiner_excel(joiner_path,dateStr)
+# joiner_path = '/Users/fujinshi/Desktop/多人讨论/多人讨论上座明细/' + dateStr + '上座明细.xlsx'
+# # 读取文件（文件夹中文件）
+# handing_joiner_excel(joiner_path,dateStr)
