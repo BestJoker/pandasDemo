@@ -175,7 +175,7 @@ def initail(dateStr):
 #     dateStr = x.strftime('%m-%d')
 #     initail(dateStr)
 
-dateStr = '02-26'
+dateStr = '02-22'
 initail(dateStr)
 
 
