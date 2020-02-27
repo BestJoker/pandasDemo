@@ -48,7 +48,7 @@ print (result_df)
 
 
 #构建一个表格数据，映射日期和主题和topic以及起始时间，总时长
-start_date = '2020-02-20'
+start_date = '2020-02-03'
 end_date = '2020-02-26'
 info_series = pd.date_range(start=start_date,end=end_date,freq='D')
 info_df = pd.DataFrame(columns=['日期','主题','topic_id','开始时间','结束时间'])
@@ -64,6 +64,9 @@ for x in list(pd.date_range(start=start_date,end=end_date)):
     topic = getTopicWithDateStr(dateStr)
     topic = topic.split('】')[1]
     df = df[df['主题名称::filter'].str.contains(topic)].reset_index(drop=True)
+    # print ('主题是:%s' %topic)
+    # print (df.head(2))
+
     # 将时间一列拆分开
     df['日期筛选系列'] = df['分钟'].str[0:5] > df['the_day'].str[5:10]
     df['时间'] = df['分钟'].str[6:11]
@@ -85,6 +88,7 @@ for x in list(pd.date_range(start=start_date,end=end_date)):
     for x in list(df['类型'].unique()):
         name = df['the_day'].str[5:10][0]+ x + '人数'
         df[name] = df[df['类型'] == x]['分钟人数']
+
         df1 = df[df['类型'] == x][['日期筛选系列','时间',name]]
         df1 = df1.sort_values(by=['日期筛选系列','时间'])
         #加入到结果里面
@@ -98,7 +102,7 @@ print (info_df.head(50))
 print (result_df.columns)
 print (out_result_df.columns)
 
-path = '/Users/fujinshi/Desktop/多人讨论/多人讨论分钟跳失/分钟数据汇总.xlsx'
+path = '/Users/fujinshi/Desktop/多人讨论-区分付费/多人讨论分钟跳失/分钟数据汇总.xlsx'
 writer = pd.ExcelWriter(path)
 result_df.to_excel(excel_writer=writer, sheet_name='进入人数', index=None)
 out_result_df.to_excel(excel_writer=writer,sheet_name='离开人数',index=None)
