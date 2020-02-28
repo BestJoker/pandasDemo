@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import os
 
+#https://mlln.cn/2018/08/13/pandas%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90100%E9%81%93%E7%BB%83%E4%B9%A0%E9%A2%98-%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86/
+
 #1.list或numpy array或dict转pd.Series
 print ('-'*10+'1'+'-'*10)
 
@@ -323,7 +325,70 @@ print (type(grouped.get_group('banana')))
 print (df.groupby(by=['fruit']).get_group('banana')['taste'].sort_values().iloc[-n])
 print (type(df.groupby(by=['fruit']).get_group('banana')['taste']))
 
+#43.分组后获取每组平均值, 并且保持分组列不是index
+print ('-'*20+'43')
+df = pd.DataFrame({'fruit': ['apple', 'banana', 'orange'] * 3,
+                   'rating': np.random.rand(9),
+                   'price': np.random.randint(0, 15, 9)})
+print (df)
+res = df.groupby('fruit',as_index=False)['price'].mean()
+print (res)
 
-# print ('-'*20+'6')
+#44.参照两列合并两个dataframe, 并且只保留两个dataframe都有的行
+print ('-'*20+'44')
+
+df1 = pd.DataFrame({'fruit': ['apple', 'banana', 'orange'] * 3,
+                    'weight': ['high', 'medium', 'low'] * 3,
+                    'price': np.random.randint(0, 15, 9)})
+
+df2 = pd.DataFrame({'pazham': ['apple', 'orange', 'pine'] * 2,
+                    'kilo': ['high', 'low'] * 3,
+                    'price': np.random.randint(0, 15, 6)})
+
+res = pd.merge(df1,df2,how='inner',left_on=['fruit','weight'],right_on=['pazham','kilo'],suffixes=['_left','_right'])
+print (res)
+
+
+#45.如何从dataframe中删除另一个dataframe中存在的行
+print ('-'*20+'45')
+df1 = pd.DataFrame({'fruit': ['apple', 'orange', 'banana'] * 3,
+                    'weight': ['high', 'medium', 'low'] * 3,
+                    'price': np.arange(9)})
+
+df2 = pd.DataFrame({'fruit': ['apple', 'orange', 'pine'] * 2,
+                    'weight': ['high', 'medium'] * 3,
+                    'price': np.arange(6)})
+
+print (df1[~df1.isin(df2)].all(1))
+print (df1.isin(df2))
+
+#46.如何获得两列值匹配的位置
+print ('-'*20+'46')
+
+df = pd.DataFrame({'fruit1': np.random.choice(['apple', 'orange', 'banana'], 10),
+                    'fruit2': np.random.choice(['apple', 'orange', 'banana'], 10)})
+res = np.where(df.fruit1==df.fruit2)
+print (res)
+
+#47.获取整个dataframe值的计数
+print ('-'*20+'47')
+
+df = pd.DataFrame(np.random.randint(1, 10, 20).reshape(-1, 4), columns = list('abcd'))
+print (df)
+res = pd.value_counts(df.values.ravel())
+print (res)
+print (df.values.ravel())#将df的值变成数组
+
+
+#48.字符串列的分割,将一列分割成两列
+print ('-'*20+'48')
+df = pd.DataFrame(["STD, City    State",
+"33, Kolkata    West Bengal",
+"44, Chennai    Tamil Nadu",
+"40, Hyderabad    Telengana",
+"80, Bangalore    Karnataka"], columns=['balabala'])
+
+print (df)
+print (df.balabala.str.split(',',expand=True))
 
 
