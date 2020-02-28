@@ -29,7 +29,8 @@ def getTopicWithDateStr(dateStr):
         '02-23': '企业面临现金流大考，如何行动才能转危为安？',
         '02-24': '中美贸易战，对我们普通人有什么影响？',
         '02-25': '线上教育备受关注，如何借力新势能设计爆品课程？',
-        '02-26': '疫情期间，企业如何挖掘颠覆创新的机会？'
+        '02-26': '疫情期间，企业如何挖掘颠覆创新的机会？',
+        '02-27': '没有经验，怎样快速上手做短视频营销？'
     }
     topic = topic_dic[dateStr]
     return topic
@@ -48,8 +49,8 @@ print (result_df)
 
 
 #构建一个表格数据，映射日期和主题和topic以及起始时间，总时长
-start_date = '2020-02-03'
-end_date = '2020-02-26'
+start_date = '2020-02-10'
+end_date = '2020-02-27'
 info_series = pd.date_range(start=start_date,end=end_date,freq='D')
 info_df = pd.DataFrame(columns=['日期','主题','topic_id','开始时间','结束时间'])
 info_df['日期'] = info_series
