@@ -31,7 +31,8 @@ def getTopicWithDateStr(dateStr):
         '02-24': '中美贸易战，对我们普通人有什么影响？',
         '02-25': '线上教育备受关注，如何借力新势能设计爆品课程？',
         '02-26': '疫情期间，企业如何挖掘颠覆创新的机会？',
-        '02-27': '没有经验，怎样快速上手做短视频营销？'
+        '02-27': '没有经验，怎样快速上手做短视频营销？',
+        '02-28': '疫情过后，哪些方向更值得投资？'
     }
     topic = topic_dic[dateStr]
     return topic
@@ -176,7 +177,7 @@ def initail(dateStr):
 #     dateStr = x.strftime('%m-%d')
 #     initail(dateStr)
 
-dateStr = '02-27'
+dateStr = '02-28'
 initail(dateStr)
 
 
