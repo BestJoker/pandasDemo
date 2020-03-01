@@ -32,7 +32,8 @@ def getTopicWithDateStr(dateStr):
         '02-25': '线上教育备受关注，如何借力新势能设计爆品课程？',
         '02-26': '疫情期间，企业如何挖掘颠覆创新的机会？',
         '02-27': '没有经验，怎样快速上手做短视频营销？',
-        '02-28': '疫情过后，哪些方向更值得投资？'
+        '02-28': '疫情过后，哪些方向更值得投资？',
+        '02-29': '零售行业如何在疫情中寻找突破？'
     }
     topic = topic_dic[dateStr]
     return topic
@@ -172,12 +173,12 @@ def initail(dateStr):
     handing_joiner_excel(joiner_path, dateStr)
 
 
-# for x in list(pd.date_range(start='2020-02-03',end='2020-02-25')):
+# for x in list(pd.date_range(start='2020-02-15',end='2020-02-29')):
 #     #生成时间，就是表格名称
 #     dateStr = x.strftime('%m-%d')
 #     initail(dateStr)
 
-dateStr = '02-28'
+dateStr = '02-29'
 initail(dateStr)
 
 
