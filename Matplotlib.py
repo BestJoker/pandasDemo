@@ -55,7 +55,10 @@ def onlooker_count(count_df,time_df):
 
     #添加围观人数分布图像
     plt.subplot(2, 2, 3)
-    plt.plot(count_df['日期'],count_df['总人均时长'],'y-',label='总人均时长')
+    x = np.array(count_df['日期'])
+    plt.bar(x, count_df['付费社员围观人数'], width=0.5, color='red', label='付费社员围观人数')
+    plt.bar(x, count_df['老注册围观人数'], width=0.5, color='blue', label='老注册围观人数', bottom=count_df['付费社员围观人数'])
+    plt.bar(x, count_df['新注册围观人数'], width=0.5, color='green', label='新注册围观人数', bottom=count_df['老注册围观人数'])
     plt.xticks(rotation=45)
     plt.grid(axis='y')
     # 添加图例
@@ -86,15 +89,9 @@ def onlooker_count(count_df,time_df):
     plt.savefig('围观人数.png',dpi=150,bbox_inches='tight')
     plt.show()
 
-
 count_df = pd.read_excel(path, sheet_name='主题维度分人群数据')
 time_df = pd.read_excel(path,sheet_name='平均时长分布')
-#onlooker_count(count_df,time_df)
+onlooker_count(count_df,time_df)
 
-x = np.array(count_df['日期'])
 
-plt.bar(x, count_df['付费社员围观人数'], width=0.5, color='red', label='付费社员围观人数')
-plt.bar(x, count_df['老注册围观人数'], width=0.5, color='blue', label='老注册围观人数',bottom=count_df['付费社员围观人数'])
-plt.bar(x,count_df['新注册围观人数'],width=0.5,color='green',label='新注册围观人数',bottom=count_df['老注册围观人数'])
 
-plt.show()
