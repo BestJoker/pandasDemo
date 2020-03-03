@@ -89,9 +89,52 @@ def onlooker_count(count_df,time_df):
     plt.savefig('围观人数.png',dpi=150,bbox_inches='tight')
     plt.show()
 
+
+def barTest(df):
+    size = 10
+    y1 = [6, 5, 8, 5, 6, 6, 8, 9, 8, 10]
+    y2 = [5, 3, 6, 4, 3, 4, 7, 4, 4, 6]
+    y3 = [4, 1, 2, 1, 2, 1, 6, 2, 3, 2]
+    x = np.arange(size)
+    total_width, n = 0.8, 3
+    width = total_width / n
+    plt.bar(x,y1,width=width,color='r')
+    plt.bar(x+width,y2,width=width,color='g')
+    plt.bar(x+2*width,y3,width=width,color='b')
+    plt.xticks(x+width,x)
+    plt.xlabel('日期')
+    plt.ylabel('数量')
+    plt.title('标题')
+    #显示应有的值
+    for a,b in zip(x,y1):
+        plt.text(a,b+0.1,b,ha='center',va='bottom')
+    for a,b in zip(x,y2):
+        plt.text(a+width,b+0.1,b,ha='center',va='bottom')
+    for a, b in zip(x,y3):
+        plt.text(a+2*width, b + 0.1,b, ha='center', va='bottom')
+
+    plt.show()
+
+def daysPie(df):
+    print (df)
+    df = df.set_index('次数')
+    colors = ['peru','coral','salmon','yellow','grey']
+    labels = np.array(df.columns)
+    rations = np.array(df.loc['比例'].values)
+    explode = [0.03,0.03,0.03,0.03,0.03]
+    #绘制饼图
+    plt.pie(rations,explode=explode,colors=colors,labels=labels,startangle=180,autopct='%.1f%%')
+    plt.title('近五日留存')
+    plt.axis('equal')#将饼图显示为正圆形
+    plt.show()
+
+
+
 count_df = pd.read_excel(path, sheet_name='主题维度分人群数据')
 time_df = pd.read_excel(path,sheet_name='平均时长分布')
-onlooker_count(count_df,time_df)
-
+days_df = pd.read_excel(path,sheet_name='围观用户天数分布')
+# onlooker_count(count_df,time_df)
+# barTest(count_df)
+daysPie(days_df)
 
 
