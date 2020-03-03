@@ -34,7 +34,8 @@ def getTopicWithDateStr(dateStr):
         '02-27': '没有经验，怎样快速上手做短视频营销？',
         '02-28': '疫情过后，哪些方向更值得投资？',
         '02-29': '零售行业如何在疫情中寻找突破？',
-        '03-01': '零售行业如何把握疫情后的先机？'
+        '03-01': '零售行业如何把握疫情后的先机？',
+        '03-02': '直播带货成为生存之策，李佳琦的成功我能否复制？'
     }
     topic = topic_dic[dateStr]
     return topic
@@ -179,7 +180,7 @@ def initail(dateStr):
 #     dateStr = x.strftime('%m-%d')
 #     initail(dateStr)
 
-dateStr = '03-01'
+dateStr = '03-02'
 initail(dateStr)
 
 
