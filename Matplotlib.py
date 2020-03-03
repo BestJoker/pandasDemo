@@ -14,8 +14,6 @@ plt.rcParams['axes.unicode_minus']=False #用来正常显示负号
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 path = os.path.join(PROJECT_ROOT,'58天区分付费统计结果.xlsx')
 
-
-
 #绘制围观人数图像
 def onlooker_count(count_df,time_df):
 
@@ -89,52 +87,78 @@ def onlooker_count(count_df,time_df):
     plt.savefig('围观人数.png',dpi=150,bbox_inches='tight')
     plt.show()
 
+def timePic(count_df,time_df,days_df):
 
-def barTest(df):
-    size = 10
-    y1 = [6, 5, 8, 5, 6, 6, 8, 9, 8, 10]
-    y2 = [5, 3, 6, 4, 3, 4, 7, 4, 4, 6]
-    y3 = [4, 1, 2, 1, 2, 1, 6, 2, 3, 2]
-    x = np.arange(size)
-    total_width, n = 0.8, 3
-    width = total_width / n
-    plt.bar(x,y1,width=width,color='r')
-    plt.bar(x+width,y2,width=width,color='g')
-    plt.bar(x+2*width,y3,width=width,color='b')
-    plt.xticks(x+width,x)
-    plt.xlabel('日期')
-    plt.ylabel('数量')
-    plt.title('标题')
-    #显示应有的值
-    for a,b in zip(x,y1):
-        plt.text(a,b+0.1,b,ha='center',va='bottom')
-    for a,b in zip(x,y2):
-        plt.text(a+width,b+0.1,b,ha='center',va='bottom')
-    for a, b in zip(x,y3):
-        plt.text(a+2*width, b + 0.1,b, ha='center', va='bottom')
+    #构建画布
+    plt.figure(figsize=(count_df['日期'].shape[0] / 1.2,15),dpi=80)
 
-    plt.show()
+    #划分，绘制平均围观时长曲线
+    plt.subplot(2,2,1)
+    y = np.array(['总人均时长', '付费社员人均时长', '老注册人均时长', '新注册人均时长'])
+    line_style_array = np.array(['r-', 'g-', 'b-', 'c-'])
+    for i in range(len(y)):
+        x_str = y[i]
+        plt.plot(count_df['日期'],count_df[x_str],line_style_array[i],label=y[i])
+    plt.title('平均围观时长')
+    plt.xticks(rotation=45)
+    plt.yticks(np.arange(0,70,10))
+    plt.grid(axis='y')
+    plt.legend()
 
-def daysPie(df):
-    print (df)
-    df = df.set_index('次数')
-    colors = ['peru','coral','salmon','yellow','grey']
-    labels = np.array(df.columns)
-    rations = np.array(df.loc['比例'].values)
+
+    #绘制围观用户时长占比曲线
+    plt.subplot(2,2,2)
+    x = np.array(count_df['日期'])
+    y = np.array(['5分钟以内占比','10分钟以内占比','30分钟以上占比'])
+    line_style_array = np.array(['r-', 'g-', 'b-'])
+    for i in range(len(y)):
+        x_str = y[i]
+        plt.plot(x,time_df[x_str],line_style_array[i],label=y[i])
+    plt.title('总围观用户')
+    plt.xticks(rotation=45)
+    plt.yticks(np.arange(0,1,0.1))
+    plt.grid(axis='y')
+    plt.legend()
+    #对应曲线赋值
+    for i in range(len(x)):
+        a = x[i]
+        for j in range(len(y)):
+            #获取对应标题，来去除对应纵坐标
+            b = time_df[y[j]][i]
+            plt.text(a, b + 0.005, '%1.1f' %(100*b)+'%', ha='center', va='bottom', fontsize=8)
+
+
+    days_df = days_df.set_index('次数')
+    labels = np.array(days_df.columns)
+    rations = np.array(days_df.loc['比例'].values)
+    counts = np.array(days_df.loc['人数'].values)
+
+    # 绘制第一个柱状图
+    plt.subplot(2, 2, 3)
+    plt.bar(labels, counts, width=0.4, color='b')
+    plt.grid(axis='y')
+    plt.title('近5日留存人数')
+    # 添加数据标签
+    for a, b in zip(labels, counts):
+        plt.text(a, b + 0.1, '%d' % b, ha='center', va='bottom')
+
+
+    #绘制饼图
+    plt.subplot(2,2,4)
+    colors = ['b','r','g','y','c']
     explode = [0.03,0.03,0.03,0.03,0.03]
     #绘制饼图
-    plt.pie(rations,explode=explode,colors=colors,labels=labels,startangle=180,autopct='%.1f%%')
+    plt.pie(rations,explode=explode,colors=colors,labels=labels,startangle=180,autopct='%.1f%%',textprops={'color':'w',
+                                                                                                           'fontsize':12})
     plt.title('近五日留存')
     plt.axis('equal')#将饼图显示为正圆形
-    plt.show()
 
+    plt.show()
 
 
 count_df = pd.read_excel(path, sheet_name='主题维度分人群数据')
 time_df = pd.read_excel(path,sheet_name='平均时长分布')
 days_df = pd.read_excel(path,sheet_name='围观用户天数分布')
-# onlooker_count(count_df,time_df)
-# barTest(count_df)
-daysPie(days_df)
-
+onlooker_count(count_df,time_df)
+timePic(count_df,time_df,days_df)
 
