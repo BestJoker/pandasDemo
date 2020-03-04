@@ -1,1 +1,1 @@
-# coding:utf-8import pandas as pdimport numpy as npimport osPROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))path = os.path.join(PROJECT_ROOT,'02-26围观.xlsx')df = pd.read_excel(path)print (df.head(10))
+# coding:utf-8import pandas as pdimport numpy as npimport osPROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))path = os.path.join(PROJECT_ROOT,'02-26围观.xlsx')df = pd.read_excel(path)print (df.head(10))print (df.columns)print (df.shape[0])print (df['围观时长(min)'].mean())print (df['时长分布'].value_counts())
