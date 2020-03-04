@@ -166,6 +166,7 @@ def scatterTest(df):
     plt.grid(True)
     plt.show()
 
+#图中图
 def subplotTest():
     fig = plt.figure()
     x = [1,2,3,4,5,6,7]
@@ -191,6 +192,19 @@ def subplotTest():
     plt.title('title inside 2')
     plt.show()
 
+#次坐标轴
+def sec_axis():
+    x = np.arange(0,10,0.1)
+    y1 = 0.05 * x ** 2
+    y2 = -1 * y1
+    fig,ax1 = plt.subplots()
+    ax2 = ax1.twinx()
+    ax1.plot(x,y1,'g-')
+    ax2.plot(x,y2,'r-')
+    ax1.set_xlabel('X data')
+    ax1.set_ylabel('Y1 data',color='g')
+    ax2.set_ylabel('Y2 data',color='r')
+    plt.show()
 
 count_df = pd.read_excel(path, sheet_name='主题维度分人群数据')
 time_df = pd.read_excel(path,sheet_name='平均时长分布')
@@ -198,4 +212,5 @@ days_df = pd.read_excel(path,sheet_name='围观用户天数分布')
 # onlooker_count(count_df,time_df)
 # timePic(count_df,time_df,days_df)
 # scatterTest(count_df)
-subplotTest()
+# subplotTest()
+# sec_axis()
