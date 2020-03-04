@@ -155,10 +155,47 @@ def timePic(count_df,time_df,days_df):
 
     plt.show()
 
+def scatterTest(df):
+    #构建画布
+    plt.figure(figsize=(8,5),dpi=80)
+    x = np.random.normal(0, 1, 1000)  # 1000个点的x坐标
+    y = np.random.normal(0, 1, 1000)  # 1000个点的y坐标
+    c = np.random.rand(1000)  # 1000个颜色
+    s = np.random.rand(100) * 100  # 100种大小
+    plt.scatter(x, y, c=c, s=s, alpha=0.5)
+    plt.grid(True)
+    plt.show()
+
+def subplotTest():
+    fig = plt.figure()
+    x = [1,2,3,4,5,6,7]
+    y = [1,3,4,2,5,8,6]
+
+    left,bottom,width,height = 0.1,0.1,0.8,0.8
+    ax1 = fig.add_axes([left,bottom,width,height])
+    ax1.plot(x,y,'r')
+    ax1.set_xlabel('x')
+    ax1.set_ylabel('y')
+    ax1.set_title('title')
+
+    ax2 = fig.add_axes([0.2,0.6,0.25,0.25])
+    ax2.plot(y,x,'b')
+    ax2.set_xlabel('x')
+    ax2.set_ylabel('y')
+    ax2.set_title('title inside 1')
+
+    plt.axes([0.6,0.2,0.25,0.25])
+    plt.plot(y[::1],x,'g')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.title('title inside 2')
+    plt.show()
+
 
 count_df = pd.read_excel(path, sheet_name='主题维度分人群数据')
 time_df = pd.read_excel(path,sheet_name='平均时长分布')
 days_df = pd.read_excel(path,sheet_name='围观用户天数分布')
-onlooker_count(count_df,time_df)
-timePic(count_df,time_df,days_df)
-
+# onlooker_count(count_df,time_df)
+# timePic(count_df,time_df,days_df)
+# scatterTest(count_df)
+subplotTest()
