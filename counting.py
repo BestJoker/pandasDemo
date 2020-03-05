@@ -7,7 +7,6 @@ from datetime import datetime,date,timedelta
 
 #不同人群的观看人数和平均观看时长数据组合
 def numExcelSheet(df,dateStr):
-    print (df.columns)
     # 获取不同用户身份的数量分布
     class_series = df['用户身份'].value_counts()
     date = df['日期'][0]
@@ -20,16 +19,16 @@ def numExcelSheet(df,dateStr):
     member_time = round(df[df['用户身份'] == '社员']['围观时长(min)'].mean() * 100) / 100.0
     old_time = round(df[df['用户身份'] == '老注册']['围观时长(min)'].mean() * 100) / 100.0
     new_time = round(df[df['用户身份'] == '新注册']['围观时长(min)'].mean() * 100) / 100.0
-    print ('日期' + ':' + date)
-    print ('主题' + ':' + topic)
-    print ('总围观人数' + ':' + str(total_num))
-    print ('社员围观人数' + ':' + str(member_num))
-    print ('老注册围观人数' + ':' + str(old_num))
-    print ('新注册' + ':' + str(new_num))
-    print ('总平均时长' + ':' + str(total_time))
-    print ('社员平均时长' + ':' + str(member_time))
-    print ('老注册平均时长' + ':' + str(old_time))
-    print ('新注册平均时长' + ':' + str(new_time))
+    # print ('日期' + ':' + date)
+    # print ('主题' + ':' + topic)
+    # print ('总围观人数' + ':' + str(total_num))
+    # print ('社员围观人数' + ':' + str(member_num))
+    # print ('老注册围观人数' + ':' + str(old_num))
+    # print ('新注册' + ':' + str(new_num))
+    # print ('总平均时长' + ':' + str(total_time))
+    # print ('社员平均时长' + ':' + str(member_time))
+    # print ('老注册平均时长' + ':' + str(old_time))
+    # print ('新注册平均时长' + ':' + str(new_time))
 
     share_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/多人讨论分享/' + dateStr + '分享.csv'
     joiner_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/上座明细/' + dateStr + '上座.xlsx'
@@ -69,14 +68,10 @@ def numExcelSheet(df,dateStr):
         '围观用户数':onlooker_share_num
     }
     new = pd.DataFrame(data, index=['0'])
-    print ('^^^^^^^^^^拼接好的数据：')
-    print (new)
     return new
 
 #时长分布区间
 def timeIntervalExcelSheet(df):
-    print (type(df['时长分布'].value_counts()))
-    print (df['时长分布'].value_counts())
     total_class_series = df['时长分布'].value_counts()
     date = df['日期'][0]
     total_num = df['时长分布'].shape[0]
@@ -148,12 +143,7 @@ def timeIntervalExcelSheet(df):
 
 #留存,df数据源，keep_df:保存不重复用户id，every_df:保存每一天的id
 def keepExcelSheet(df,keep_series,every_df):
-    print (type(df['用户ID']))
-    print ('进入方法前')
-    print (keep_series.shape)
     keep_series = keep_series.append(df['用户ID'])
-    print ('拼接之后')
-    print (keep_series.shape)
 
 
 def initData(start_date,end_date,keep_days):
@@ -167,8 +157,7 @@ def initData(start_date,end_date,keep_days):
     keep_series = pd.Series()#存放留存天数内所有用户ID，去重
     dic = {}#存放每天访问用id，用户比较用户某天是否来过
     time_list = list(pd.date_range(start=start_date, end=end_date))
-    print ('-'*30)
-    print (time_list)
+
     for x in time_list:
         # 生成时间，就是表格名称
         dateStr = x.strftime('%m-%d')
@@ -199,7 +188,7 @@ def initData(start_date,end_date,keep_days):
             keep_bool = 0
             #如果list长度小于5天，则直接全部计算，如果大于则取后面5天
             if (len(time_list) > keep_days):
-                if x in list[len(time_list) - keep_days:]:
+                if x in time_list[len(time_list) - keep_days:]:
                     bool = 1
                 else:
                     bool = 0
@@ -213,9 +202,6 @@ def initData(start_date,end_date,keep_days):
                 keep_series=keep_series.drop_duplicates()
                 dic[dateStr] = df['用户ID']
 
-    print (type(keep_series.values))
-
-
 
     #根据保存的每天的记录，判断一个人在某天是否来了
     #将用户去重数据填充到
@@ -224,7 +210,6 @@ def initData(start_date,end_date,keep_days):
 
     #日期中循环
     for x in dic.keys():
-        print (x)
         if x in col_name:
             print ('已经有%s列了' %x)
             continue
@@ -257,7 +242,7 @@ def initData(start_date,end_date,keep_days):
         join_count_df.loc[i,'人数'] = num
         join_count_df.loc[i,'比例'] = num / every_df['参与次数'].shape[0]
 
-    result_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/多人讨论区分付费汇总数据.xlsx'
+    result_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/58天区分付费统计结果.xlsx'
     writer = pd.ExcelWriter(result_path)
     num_dataFrame.to_excel(excel_writer=writer, sheet_name='主题维度分人群数据', index=None)
     time_interval_dataFrame.to_excel(excel_writer=writer, sheet_name='平均时长分布', index=None)
