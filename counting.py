@@ -199,7 +199,7 @@ def initData(start_date,end_date,keep_days):
             keep_bool = 0
             #如果list长度小于5天，则直接全部计算，如果大于则取后面5天
             if (len(time_list) > keep_days):
-                if x in list[len(time_list) - keep_days:]:
+                if x in time_list[len(time_list) - keep_days:]:
                     bool = 1
                 else:
                     bool = 0
