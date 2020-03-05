@@ -170,7 +170,7 @@ end_str = yesterday = (date.today() + timedelta(days = -1)).strftime("%Y-%m-%d")
 keep_series = pd.Series()#存放留存天数内所有用户ID，去重
 dic = {}#存放每天访问用id，用户比较用户某天是否来过
 keep_days = 5#留存包含最新的日期的几天
-list = list(pd.date_range(start='2020-02-27', end=end_str))
+list = list(pd.date_range(start='2020-02-29', end=end_str))
 
 for x in list:
     # 生成时间，就是表格名称
