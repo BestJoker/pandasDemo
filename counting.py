@@ -4,6 +4,7 @@ import numpy as np
 import os
 import openpyxl
 from datetime import datetime,date,timedelta
+import drawPic
 
 #不同人群的观看人数和平均观看时长数据组合
 def numExcelSheet(df,dateStr):
@@ -249,3 +250,6 @@ def initData(start_date,end_date,keep_days):
     join_count_df.T.to_excel(excel_writer=writer,sheet_name='围观用户天数分布')
     writer.save()
     writer.close()
+
+    # 将对应的文件画出来
+    drawPic.initData()
