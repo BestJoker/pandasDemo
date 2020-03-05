@@ -147,7 +147,23 @@ def keepExcelSheet(df,keep_series,every_df):
     keep_series = keep_series.append(df['用户ID'])
 
 
-def initData(start_date,end_date,keep_days):
+#处理分社分享数据
+def community_share(topic_dic):
+    # 多人讨论-分社看板_2020_03_05
+    date_str = date.today().strftime('%Y_%m_%d')
+    path = '/Users/fujinshi/Desktop/多人讨论-区分付费/多人讨论-分社看板_' + date_str + '.xlsx'
+    df = pd.read_excel(path)
+    # 先过滤出分社==全国的数据，在匹配主题
+    df = df[df['分社'] == '全国'].reset_index(drop=True)
+    # 主题进行分列，然后
+    df['主题'] = df['主题'].str.split('】', expand=True)[1]
+    # 匹配主题是否在主题字典中
+    df = df[df['主题'].isin(topic_dic.values())]
+    df = df.sort_values(by='日期').reset_index(drop=True)
+    return df
+
+def initData(start_date,end_date,keep_days,topic_dic):
+
     num_dataFrame = pd.DataFrame(
         columns=['日期', '主题', '总围观人数', '社员围观人数', '老注册围观人数', '新注册围观人数', '总人均时长', '社员人均时长', '老注册人均时长', '新注册人均时长','分享用户数','上座用户数','围观用户数'])
     print (num_dataFrame)
@@ -203,7 +219,6 @@ def initData(start_date,end_date,keep_days):
                 keep_series=keep_series.drop_duplicates()
                 dic[dateStr] = df['用户ID']
 
-
     #根据保存的每天的记录，判断一个人在某天是否来了
     #将用户去重数据填充到
     every_df = pd.DataFrame({'用户ID':keep_series.values})
@@ -243,13 +258,21 @@ def initData(start_date,end_date,keep_days):
         join_count_df.loc[i,'人数'] = num
         join_count_df.loc[i,'比例'] = num / every_df['参与次数'].shape[0]
 
+
+    #全国分享数据
+    community_df = community_share(topic_dic)
+
+
     result_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/58天区分付费统计结果.xlsx'
     writer = pd.ExcelWriter(result_path)
     num_dataFrame.to_excel(excel_writer=writer, sheet_name='主题维度分人群数据', index=None)
     time_interval_dataFrame.to_excel(excel_writer=writer, sheet_name='平均时长分布', index=None)
     join_count_df.T.to_excel(excel_writer=writer,sheet_name='围观用户天数分布')
+    community_df.to_excel(excel_writer=writer,sheet_name='分享数据')
     writer.save()
     writer.close()
 
     # 将对应的文件画出来
     drawPic.initData()
+
+

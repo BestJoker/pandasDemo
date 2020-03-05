@@ -49,7 +49,7 @@ def handing_excel(path,current_date_str,topic):
 
     #读取excel中原始数据
     df = pd.read_excel(path)
-    # print (df.head(15))
+    print (df.head(5))
     # print ('-'*10)
 
     df1 = df[df['主题'].str.contains(topic)]
