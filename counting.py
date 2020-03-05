@@ -156,112 +156,111 @@ def keepExcelSheet(df,keep_series,every_df):
     print (keep_series.shape)
 
 
+def initData(start_date,end_date,keep_days):
+    num_dataFrame = pd.DataFrame(
+        columns=['日期', '主题', '总围观人数', '社员围观人数', '老注册围观人数', '新注册围观人数', '总人均时长', '社员人均时长', '老注册人均时长', '新注册人均时长','分享用户数','上座用户数','围观用户数'])
+    print (num_dataFrame)
 
-num_dataFrame = pd.DataFrame(
-    columns=['日期', '主题', '总围观人数', '社员围观人数', '老注册围观人数', '新注册围观人数', '总人均时长', '社员人均时长', '老注册人均时长', '新注册人均时长','分享用户数','上座用户数','围观用户数'])
-print (num_dataFrame)
+    time_interval_dataFrame = pd.DataFrame(columns=['日期','总围观人数','1分钟以内','1~5分钟','5~10分钟','10~20分钟','20~30分钟','30~60分钟','60~90分钟','90分钟以上','5分钟以内','30分钟以上','60分钟以上','5分钟以内占比','10分钟以内占比','30分钟以上占比','---','社员日期','社员围观人数','社员1分钟以内','社员1~5分钟','社员5~10分钟','社员10~20分钟','社员20~30分钟','社员30~60分钟','社员60~90分钟','社员90分钟以上','社员5分钟以内占比','社员10分钟以内占比','社员30分钟以上占比'])
+    print (time_interval_dataFrame)
 
-time_interval_dataFrame = pd.DataFrame(columns=['日期','总围观人数','1分钟以内','1~5分钟','5~10分钟','10~20分钟','20~30分钟','30~60分钟','60~90分钟','90分钟以上','5分钟以内','30分钟以上','60分钟以上','5分钟以内占比','10分钟以内占比','30分钟以上占比','---','社员日期','社员围观人数','社员1分钟以内','社员1~5分钟','社员5~10分钟','社员10~20分钟','社员20~30分钟','社员30~60分钟','社员60~90分钟','社员90分钟以上','社员5分钟以内占比','社员10分钟以内占比','社员30分钟以上占比'])
-print (time_interval_dataFrame)
+    keep_series = pd.Series()#存放留存天数内所有用户ID，去重
+    dic = {}#存放每天访问用id，用户比较用户某天是否来过
+    time_list = list(pd.date_range(start=start_date, end=end_date))
+    print ('-'*30)
+    print (time_list)
+    for x in time_list:
+        # 生成时间，就是表格名称
+        dateStr = x.strftime('%m-%d')
+        # 生成表格路径
+        path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/' + dateStr + '围观.xlsx'
+        print ('*'*20)
+        print (path)
+        # 判断如果没有文件则直接跳过，如果有文件则正常读取
+        try:
+            df = pd.read_excel(path)
+        except IOError:
+            print('没有找到文件')
+        else:
+            print ('可以执行')
+            # 读取excel中原始数据
+            df = pd.read_excel(path)
 
-#获取昨天日期
-end_str = yesterday = (date.today() + timedelta(days = -1)).strftime("%Y-%m-%d")    # 昨天日期
+            #获取观看人数和时间的方法
+            new_num_df = numExcelSheet(df,dateStr)
+            num_dataFrame = num_dataFrame.append(new_num_df, ignore_index=True)
+            #num_dataFrame存储的就是不同人群的观看人数和时长
 
-keep_series = pd.Series()#存放留存天数内所有用户ID，去重
-dic = {}#存放每天访问用id，用户比较用户某天是否来过
-keep_days = 5#留存包含最新的日期的几天
-list = list(pd.date_range(start='2020-02-29', end=end_str))
+            #获取人均观看时长分段数据
+            new_time_interval_df = timeIntervalExcelSheet(df)
+            time_interval_dataFrame = time_interval_dataFrame.append(new_time_interval_df,ignore_index=True)
 
-for x in list:
-    # 生成时间，就是表格名称
-    dateStr = x.strftime('%m-%d')
-    # 生成表格路径
-    path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/' + dateStr + '围观.xlsx'
-    print ('*'*20)
-    print (path)
-    # 判断如果没有文件则直接跳过，如果有文件则正常读取
-    try:
-        df = pd.read_excel(path)
-    except IOError:
-        print('没有找到文件')
-    else:
-        print ('可以执行')
-        # 读取excel中原始数据
-        df = pd.read_excel(path)
-
-        #获取观看人数和时间的方法
-        new_num_df = numExcelSheet(df,dateStr)
-        num_dataFrame = num_dataFrame.append(new_num_df, ignore_index=True)
-        #num_dataFrame存储的就是不同人群的观看人数和时长
-
-        #获取人均观看时长分段数据
-        new_time_interval_df = timeIntervalExcelSheet(df)
-        time_interval_dataFrame = time_interval_dataFrame.append(new_time_interval_df,ignore_index=True)
-
-        # 判断是否计算留存
-        keep_bool = 0
-        #如果list长度小于5天，则直接全部计算，如果大于则取后面5天
-        if (len(list) > keep_days):
-            if x in list[len(list) - keep_days:]:
-                bool = 1
+            # 判断是否计算留存
+            keep_bool = 0
+            #如果list长度小于5天，则直接全部计算，如果大于则取后面5天
+            if (len(time_list) > keep_days):
+                if x in list[len(time_list) - keep_days:]:
+                    bool = 1
+                else:
+                    bool = 0
             else:
-                bool = 0
+                bool = 1
+            #如果需要计算留存则计算，否则忽略
+            if bool==1:
+                #拼接找到所有用户ID，并且去重
+                keep_series = keep_series.append(df['用户ID'])
+                #去重
+                keep_series=keep_series.drop_duplicates()
+                dic[dateStr] = df['用户ID']
+
+    print (type(keep_series.values))
+
+
+
+    #根据保存的每天的记录，判断一个人在某天是否来了
+    #将用户去重数据填充到
+    every_df = pd.DataFrame({'用户ID':keep_series.values})
+    col_name = every_df.columns.tolist()
+
+    #日期中循环
+    for x in dic.keys():
+        print (x)
+        if x in col_name:
+            print ('已经有%s列了' %x)
+            continue
         else:
-            bool = 1
-        #如果需要计算留存则计算，否则忽略
-        if bool==1:
-            #拼接找到所有用户ID，并且去重
-            keep_series = keep_series.append(df['用户ID'])
-            #去重
-            keep_series=keep_series.drop_duplicates()
-            dic[dateStr] = df['用户ID']
+            print ('没有%s列需要增加' %x)
+            col_name.insert(len(col_name),x)
+        every_df = every_df.reindex(columns=col_name)
 
-print (type(keep_series.values))
+        for i in range(0,every_df['用户ID'].shape[0]):
+            id = every_df['用户ID'][i]
+            if id in dic[x].values:
+                every_df.loc[i,x] = 1
+            else:
+                every_df.loc[i,x] = 0
 
-#根据保存的每天的记录，判断一个人在某天是否来了
-#将用户去重数据填充到
-every_df = pd.DataFrame({'用户ID':keep_series.values})
-col_name = every_df.columns.tolist()
+    #由于地区不能参与运算, 因此在df1数据表中删除地区
+    every_df_drop = every_df.drop(['用户ID'], axis = 1, inplace = False)
+    #求每行的和，即为参加次数
+    every_df['参与次数'] = every_df_drop.apply(lambda x: x.sum(), axis=1)
+    #再根据分类计算分布
+    total_class_series = every_df['参与次数'].value_counts()
 
-#日期中循环
-for x in dic.keys():
-    print (x)
-    if x in col_name:
-        print ('已经有%s列了' %x)
-        continue
-    else:
-        print ('没有%s列需要增加' %x)
-        col_name.insert(len(col_name),x)
-    every_df = every_df.reindex(columns=col_name)
+    #创建一个时间分布的表格
+    join_count_df = pd.DataFrame(columns=['次数','人数','比例'])
+    #循环获取分布的数据，生成df，保存到表格中
+    for i in range(0,len(total_class_series.index)):
+        title = total_class_series.index.values[i]
+        num = total_class_series.values[i]
+        join_count_df.loc[i,'次数'] = str(title)+'天'
+        join_count_df.loc[i,'人数'] = num
+        join_count_df.loc[i,'比例'] = num / every_df['参与次数'].shape[0]
 
-    for i in range(0,every_df['用户ID'].shape[0]):
-        id = every_df['用户ID'][i]
-        if id in dic[x].values:
-            every_df.loc[i,x] = 1
-        else:
-            every_df.loc[i,x] = 0
-
-#由于地区不能参与运算, 因此在df1数据表中删除地区
-every_df_drop = every_df.drop(['用户ID'], axis = 1, inplace = False)
-#求每行的和，即为参加次数
-every_df['参与次数'] = every_df_drop.apply(lambda x: x.sum(), axis=1)
-#再根据分类计算分布
-total_class_series = every_df['参与次数'].value_counts()
-
-#创建一个时间分布的表格
-join_count_df = pd.DataFrame(columns=['次数','人数','比例'])
-#循环获取分布的数据，生成df，保存到表格中
-for i in range(0,len(total_class_series.index)):
-    title = total_class_series.index.values[i]
-    num = total_class_series.values[i]
-    join_count_df.loc[i,'次数'] = str(title)+'天'
-    join_count_df.loc[i,'人数'] = num
-    join_count_df.loc[i,'比例'] = num / every_df['参与次数'].shape[0]
-
-result_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/多人讨论区分付费汇总数据.xlsx'
-writer = pd.ExcelWriter(result_path)
-num_dataFrame.to_excel(excel_writer=writer, sheet_name='主题维度分人群数据', index=None)
-time_interval_dataFrame.to_excel(excel_writer=writer, sheet_name='平均时长分布', index=None)
-join_count_df.T.to_excel(excel_writer=writer,sheet_name='围观用户天数分布')
-writer.save()
-writer.close()
+    result_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/多人讨论区分付费汇总数据.xlsx'
+    writer = pd.ExcelWriter(result_path)
+    num_dataFrame.to_excel(excel_writer=writer, sheet_name='主题维度分人群数据', index=None)
+    time_interval_dataFrame.to_excel(excel_writer=writer, sheet_name='平均时长分布', index=None)
+    join_count_df.T.to_excel(excel_writer=writer,sheet_name='围观用户天数分布')
+    writer.save()
+    writer.close()
