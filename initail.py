@@ -47,6 +47,16 @@ def handing_excel(path,current_date_str,topic):
     else:
         print ('可以执行')
 
+    #判断是否处理过，如果处理过直接返回
+    all_df = pd.read_excel(path,None)
+    if '更新日期' in all_df.keys():
+        current_df = all_df['更新日期']
+        if current_df.size > 0:
+            print (current_date_str+'日期已经更新过，跳过')
+            return
+        else:
+            print ('异常：'+current_date_str+'日期有更新日期标题，但是没有内容，重新更新')
+
     #读取excel中原始数据
     df = pd.read_excel(path)
     #处理因为字段名称变更
@@ -102,9 +112,12 @@ def handing_excel(path,current_date_str,topic):
     # 生成excel的编辑器,拆解主题然后保存到对应额sheet中
     writer = pd.ExcelWriter(path)
     data.to_excel(excel_writer = writer,sheet_name = current_date_str,index=None)
+    #添加更新日期
+    today_str = date.today().strftime("%Y-%m-%d")
+    current_df = pd.DataFrame(data=[today_str],columns=['更新日期'])
+    current_df.to_excel(excel_writer=writer,sheet_name='更新日期',index=None)
     writer.save()
     writer.close()
-    print ('保存成功')
 
 def handing_joiner_excel(path,current_date_str,topic):
     # 判断如果没有文件则直接跳过，如果有文件则正常读取
@@ -115,10 +128,25 @@ def handing_joiner_excel(path,current_date_str,topic):
         return
     else:
         print ('可以执行')
+
+    #判断是否处理过，如果处理过直接返回
+    all_df = pd.read_excel(path,None)
+    if '更新日期' in all_df.keys():
+        current_df = all_df['更新日期']
+        if current_df.size > 0:
+            print (current_date_str+'日期已经更新过，跳过')
+            return
+        else:
+            print ('异常：'+current_date_str+'日期有更新日期标题，但是没有内容，重新更新')
+
     df = pd.read_excel(path)
     df = df[df['主题'].str.contains(topic)]
     writer = pd.ExcelWriter(path)
     df.to_excel(excel_writer = writer,sheet_name=current_date_str,index=None)
+    #添加更新日期
+    today_str = date.today().strftime("%Y-%m-%d")
+    current_df = pd.DataFrame(data=[today_str],columns=['更新日期'])
+    current_df.to_excel(excel_writer=writer,sheet_name='更新日期',index=None)
     writer.save()
     writer.close()
 
