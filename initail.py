@@ -49,6 +49,10 @@ def handing_excel(path,current_date_str,topic):
 
     #读取excel中原始数据
     df = pd.read_excel(path)
+    #处理因为字段名称变更
+    if '围观时长' in df.columns:
+        df = df.rename(columns={'围观时长': '围观时长(min)'})
+
     print (df.head(5))
     # print ('-'*10)
 
