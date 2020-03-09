@@ -384,7 +384,7 @@ def initData(start_date,end_date,keep_days,topic_dic):
                 new_time_interval_df = timeIntervalExcelSheet(df)
                 time_interval_dataFrame = time_interval_dataFrame.append(new_time_interval_df, ignore_index=True)
         else:
-            print ('不需要读取文件，直接跳过')
+            print ('----------%s不需要读取文件，直接跳过' %dateStr)
 
         # 判断是否计算留存
         keep_bool = 0
