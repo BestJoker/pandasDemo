@@ -153,12 +153,16 @@ def handing_joiner_excel(path,current_date_str,topic):
 
 def initail(dateStr,topic):
     # 生成表格路径
-    path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/' + dateStr + '围观.xlsx'
+    PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
+    path = os.path.join(PROJECT_ROOT, '多人讨论-区分付费/')
+    path = path+'围观明细/' + dateStr + '围观.xlsx'
     print ('initail:' + path)
     # 读取文件（文件夹中文件）
     handing_excel(path, dateStr,topic)
 
-    joiner_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/上座明细/' + dateStr + '上座.xlsx'
+    path = os.path.join(PROJECT_ROOT, '多人讨论-区分付费/')
+    joiner_path = path+'上座明细/' + dateStr + '上座.xlsx'
+    print (joiner_path)
     # 读取文件（文件夹中文件）
     handing_joiner_excel(joiner_path, dateStr,topic)
 

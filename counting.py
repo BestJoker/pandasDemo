@@ -151,7 +151,9 @@ def keepExcelSheet(df,keep_series,every_df):
 def community_share(topic_dic):
     # 多人讨论-分社看板_2020_03_05
     date_str = date.today().strftime('%Y_%m_%d')
-    path = '/Users/fujinshi/Desktop/多人讨论-区分付费/多人讨论-分社看板_' + date_str + '.xlsx'
+    PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
+    root_path = os.path.join(PROJECT_ROOT, '多人讨论-区分付费/')
+    path = root_path+'多人讨论-分社看板_' + date_str + '.xlsx'
     df = pd.read_excel(path)
     # 先过滤出分社==全国的数据，在匹配主题
     df = df[df['分社'] == '全国'].reset_index(drop=True)
@@ -322,7 +324,9 @@ def initData(start_date,end_date,keep_days,topic_dic):
     time_list = list(pd.date_range(start=start_date, end=end_date))
 
     #拿到现有的统计结果，如果有就进行赋值
-    result_path = '/Users/fujinshi/Desktop/多人讨论-区分付费/58天区分付费统计结果.xlsx'
+    PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
+    root_path = os.path.join(PROJECT_ROOT, '多人讨论-区分付费/')
+    result_path = root_path + '58天区分付费统计结果.xlsx'
     try:
         result_df = pd.ExcelFile(result_path)
     except IOError:
@@ -363,7 +367,7 @@ def initData(start_date,end_date,keep_days,topic_dic):
         if num_bool | time_bool:
             print ('需要读取文件')
             # 生成表格路径
-            path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/' + dateStr + '围观.xlsx'
+            path = root_path+'围观明细/' + dateStr + '围观.xlsx'
             # 判断如果没有文件则直接跳过，如果有文件则正常读取
             try:
                 df = pd.read_excel(path)
@@ -400,7 +404,7 @@ def initData(start_date,end_date,keep_days,topic_dic):
         if bool==1:
             #如果上面没有读取文件，你就自己读取文件，如果已经读取过了，就有df了
             if num_bool | time_bool == 0:
-                path = '/Users/fujinshi/Desktop/多人讨论-区分付费/围观明细/' + dateStr + '围观.xlsx'
+                path = root_path + '围观明细/' + dateStr + '围观.xlsx'
                 # 判断如果没有文件则直接跳过，如果有文件则正常读取
                 try:
                     df = pd.read_excel(path)

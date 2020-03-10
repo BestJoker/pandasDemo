@@ -28,7 +28,9 @@ def initData(start_date,end_date,topic_dic):
         #生成时间，就是表格名称
         dateStr = x.strftime('%m-%d')
         #生成表格路径
-        path = '/Users/fujinshi/Desktop/多人讨论-区分付费/多人讨论分钟跳失/' + dateStr + '分钟跳失.xlsx'
+        PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
+        path = os.path.join(PROJECT_ROOT, '多人讨论-区分付费/多人讨论分钟跳失/')
+        path = path + dateStr + '分钟跳失.xlsx'
         df = pd.read_excel(path)
         #找到对应日期主题，根据主题筛选数据，由于主题中有【58天互动学习】
         topic = topic_dic[dateStr]
@@ -73,7 +75,8 @@ def initData(start_date,end_date,topic_dic):
     # print (result_df.columns)
     # print (out_result_df.columns)
 
-    path = '/Users/fujinshi/Desktop/多人讨论-区分付费/多人讨论分钟跳失/分钟数据汇总.xlsx'
+    PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
+    path = os.path.join(PROJECT_ROOT, '多人讨论-区分付费/多人讨论分钟跳失/分钟数据汇总.xlsx')
     writer = pd.ExcelWriter(path)
     result_df.to_excel(excel_writer=writer, sheet_name='进入人数', index=None)
     out_result_df.to_excel(excel_writer=writer,sheet_name='离开人数',index=None)
