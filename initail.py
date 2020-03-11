@@ -106,9 +106,6 @@ def handing_excel(path,current_date_str,topic):
         print ('需要增加时长分布列')
         data['时长分布'] = df.apply(lambda row:getTime(row['围观时长(min)']),axis=1)
 
-    # print (data.head(10))
-    # print (data.columns)
-
     # 生成excel的编辑器,拆解主题然后保存到对应额sheet中
     writer = pd.ExcelWriter(path)
     data.to_excel(excel_writer = writer,sheet_name = current_date_str,index=None)
@@ -173,3 +170,4 @@ def initData(start_date,end_date,topic_dic):
         dateStr = x.strftime('%m-%d')
         topic = topic_dic[dateStr]
         initail(dateStr,topic)
+
