@@ -155,6 +155,8 @@ def community_share(topic_dic):
     # 匹配主题是否在主题字典中
     df = df[df['主题'].isin(topic_dic.values())]
     df = df.sort_values(by='日期').reset_index(drop=True)
+    df['分享率'] = (df['分享人数'] / df['围观人数']).apply(lambda x: format(x,'.2%'))
+    df['分享拉人围观转化率'] = (df['分享加入人数'] / df['围观人数']).apply(lambda x: format(x,'.2f'))
     return df
 
 
