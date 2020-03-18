@@ -223,6 +223,7 @@ def initData(start_date,end_date,keep_days,topic_dic):
                 df = pd.read_excel(path)
             except IOError:
                 print('没有找到文件')
+                continue
             else:
                 print ('可以执行')
                 # 读取excel中原始数据
