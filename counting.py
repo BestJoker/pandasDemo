@@ -148,6 +148,9 @@ def community_share(topic_dic):
     root_path = os.path.join(PROJECT_ROOT, '多人讨论-区分付费/')
     path = root_path+'多人讨论-分社看板_' + date_str + '.xlsx'
     df = pd.read_excel(path)
+    df.rename(columns={'主题::filter':'主题'},inplace = True)
+    print ('-'*30)
+    print (df)
     # 先过滤出分社==全国的数据，在匹配主题
     df = df[df['分社'] == '全国'].reset_index(drop=True)
     # 主题进行分列，然后
