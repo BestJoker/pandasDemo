@@ -169,5 +169,6 @@ def initData(start_date,end_date,topic_dic):
         # 生成时间，就是表格名称
         dateStr = x.strftime('%m-%d')
         topic = topic_dic[dateStr]
-        initail(dateStr,topic)
+        if topic != '暂无':
+            initail(dateStr,topic)
 
