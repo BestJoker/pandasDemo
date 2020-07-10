@@ -1,0 +1,1 @@
+# coding:utf-8import matplotlib.pyplot as pltfrom sklearn.datasets import load_irisfrom sklearn.decomposition import PCAimport pandas as pdimport numpy as np'''2.1 SKlearn中的降维算法sklearn中降维算法都被包括在模块decomposition中，这个模块本质是一个矩阵分解模块。在过去的十年中，如果要讨论算法进步的先锋，矩阵分解可以说是独树一帜。  '''

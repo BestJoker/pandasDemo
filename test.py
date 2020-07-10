@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 
+
 #读取文件
 PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))#获取项目根目录
 path = os.path.join(PROJECT_ROOT,"课程负面评价.xlsx") #文件路径
@@ -12,10 +13,9 @@ print (df)
 
 print ('------')
 grouped = df.groupby(['sku','课程标题'])
-array = np.array()
+array = []
 for sku,group in grouped:
     print (sku[0],sku[1],group.shape[0])
-    array.append
 
 #-------数据分组-------#
 
