@@ -12,10 +12,8 @@ print (df)
 
 print ('------')
 grouped = df.groupby(['sku','课程标题'])
-array = np.array()
 for sku,group in grouped:
-    print (sku[0],sku[1],group.shape[0])
-    array.append
+    print(sku[0],sku[1],group.shape[0])
 
 #-------数据分组-------#
 
